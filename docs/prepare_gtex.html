@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Peter Carbonetto" />
+
+
+<title>Prepare GTEx data for topic modeling analysis</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/readable.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">topics</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Overview</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/stephenslab/topics">source</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Prepare GTEx data for topic modeling analysis</h1>
+<h4 class="author"><em>Peter Carbonetto</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2019-01-22</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(1)</code> </summary></p>
+<p>The command <code>set.seed(1)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/stephenslab/topics/tree/a9faadd39ad1e041675b66f0a7ae5b1b99ed92c9" target="_blank">a9faadd</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .ipynb_checkpoints/
+    Ignored:    analysis/figure/
+    Ignored:    data/GTEx_Analysis_2016-01-15_v7_RNASeQCv1.1.8_gene_reads.gct.gz
+    Ignored:    data/GTEx_v7_Annotations_SampleAttributesDS.txt
+
+Untracked files:
+    Untracked:  analysis/prepare_gtex.R
+    Untracked:  output/exper_maptpx_Xsparse_N_500_P_1000_K_5_sparse_0.1_0.9_0.4_0.9_seed_0_init_random_tol_0_1_2_3_4_5_shape_2_nrepeats_10.rds
+    Untracked:  output/gtex.csv
+    Untracked:  output/gtex_factors_rough.csv
+    Untracked:  output/gtex_loadings_rough.csv
+
+Unstaged changes:
+    Deleted:    scripts/.slurm-56522957.out.swp
+    Modified:   scripts/slurm-56509786.out
+    Modified:   scripts/slurm-56522957.out
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/2ee2e9b81511009f564154337e837792e9e703eb/analysis/prepare_gtex.Rmd" target="_blank">2ee2e9b</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2019-01-04
+</td>
+<td style="text-align:left;">
+Added step to fit_gtex_nnmf.R to write results to CSV files.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/2f8e5df1c8407fe9cfc9c6edf482ab48a2471f77/analysis/prepare_gtex.Rmd" target="_blank">2f8e5df</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2019-01-03
+</td>
+<td style="text-align:left;">
+Added steps to prepare_montoro_droplet.Rmd to give brief summary of data.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/89a1807e9779ece9ac7bd903b9583f0e7da580b8/analysis/prepare_gtex.Rmd" target="_blank">89a1807</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2019-01-03
+</td>
+<td style="text-align:left;">
+I have an initial implementation of function read.montoro.droplet.data.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/d52d6a0a49bbce7d8d74d24ad9a76fff67216fda/analysis/prepare_gtex.Rmd" target="_blank">d52d6a0</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-29
+</td>
+<td style="text-align:left;">
+Working on fit_nnmf_gtex.R script.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/stephenslab/topics/d377b6bc6ea74119c24eb0e096a48b580bd4a111/docs/prepare_gtex.html" target="_blank">d377b6b</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-29
+</td>
+<td style="text-align:left;">
+Re-built complete prepare_gtex analysis on midway2.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/e8f67e012c25e100787b24dfc740c04ca1a7b16a/analysis/prepare_gtex.Rmd" target="_blank">e8f67e0</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-29
+</td>
+<td style="text-align:left;">
+wflow_publish(“prepare_gtex.Rmd”, verbose = TRUE)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/31d35bd80d40522616e96d8ca9be26bc5bed4138/analysis/prepare_gtex.Rmd" target="_blank">31d35bd</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-29
+</td>
+<td style="text-align:left;">
+wflow_publish(“prepare_gtex.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/629a64fb3dd76dbe6327e7bcb419d15e3f11fb6c/analysis/prepare_gtex.Rmd" target="_blank">629a64f</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-29
+</td>
+<td style="text-align:left;">
+Revised writing of output files in prepare_gtex.Rmd.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/4eede6a5573640207169906f56408be600b05346/analysis/prepare_gtex.Rmd" target="_blank">4eede6a</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-29
+</td>
+<td style="text-align:left;">
+Created fit_nnmf_gtex.R, and revised writing of results in prepare_gtex.Rmd.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/140a9eab13f4e94f56d72804ce4968501082aada/analysis/prepare_gtex.Rmd" target="_blank">140a9ea</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-29
+</td>
+<td style="text-align:left;">
+Add details about how I ran prepare_gtex analysis.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/a922005fe5e5b92e3ba0e6108c55fbbce28c075e/analysis/prepare_gtex.Rmd" target="_blank">a922005</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-28
+</td>
+<td style="text-align:left;">
+A few revisions to last part of prepare_gtex analysis.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/7669e1e0af71a032215cecc8df3474ca626c7efe/analysis/prepare_gtex.Rmd" target="_blank">7669e1e</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-28
+</td>
+<td style="text-align:left;">
+Added steps to prepare_gtex.Rmd to write results to CSV files.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/fb1961bb53c1e3210a2bc98123b38dde319faa79/analysis/prepare_gtex.Rmd" target="_blank">fb1961b</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-26
+</td>
+<td style="text-align:left;">
+Added sentence about NMF fitting.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/135645ae03e720087223acc7c5fc5ca0df80ecf3/analysis/prepare_gtex.Rmd" target="_blank">135645a</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-26
+</td>
+<td style="text-align:left;">
+Added step to prepare_gtex to (roughly) fit NMF.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/98308584335210708434ea5fca9b19404854f133/analysis/prepare_gtex.Rmd" target="_blank">9830858</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-26
+</td>
+<td style="text-align:left;">
+A couple small edits to prepare_gtex.Rmd.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/stephenslab/topics/3655e04f0418fd12881a0673818c60838dbba028/docs/prepare_gtex.html" target="_blank">3655e04</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-26
+</td>
+<td style="text-align:left;">
+Adjusted PC plots in prepare_gtex analysis.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/8d8560e4ac4566cdccd244631c3ae4175481d9c5/analysis/prepare_gtex.Rmd" target="_blank">8d8560e</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-26
+</td>
+<td style="text-align:left;">
+wflow_publish(“prepare_gtex.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/stephenslab/topics/78e3484c00e10f92e718bbd8a21b5a135d92923b/docs/prepare_gtex.html" target="_blank">78e3484</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-26
+</td>
+<td style="text-align:left;">
+Added computation and plotting of PCs to prepare_gtex analysis.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/2b51cbd748cc0c01a4beef0125a6e0b51c61b58f/analysis/prepare_gtex.Rmd" target="_blank">2b51cbd</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-26
+</td>
+<td style="text-align:left;">
+wflow_publish(“prepare_gtex.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/2e98be81e80235a9cdb16c6dcc9c42bfc8a0b046/analysis/prepare_gtex.Rmd" target="_blank">2e98be8</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-25
+</td>
+<td style="text-align:left;">
+Added some text to prepare_gtex.Rmd.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/stephenslab/topics/c7c0d4e2bf0c56fc2c2067925eb5f8fef4a08327/docs/prepare_gtex.html" target="_blank">c7c0d4e</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-25
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/82e4c82999fa6650e835c4a1044b0516f1cbd748/analysis/prepare_gtex.Rmd" target="_blank">82e4c82</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-25
+</td>
+<td style="text-align:left;">
+Working on introductory text in prepare_gtex.Rmd.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/stephenslab/topics/dfa63783cbdc52715cf2177c7ed060188cd77405/docs/prepare_gtex.html" target="_blank">dfa6378</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-25
+</td>
+<td style="text-align:left;">
+Created prepare_gtex page.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/fd0135c1f3d7c9e6628db5c6facafcb1205dc614/analysis/prepare_gtex.Rmd" target="_blank">fd0135c</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-25
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/prepare_gtex.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/stephenslab/topics/1552288c8aa552fe6eaa1e0df2dabbd404a2be9a/docs/prepare_gtex.html" target="_blank">1552288</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-25
+</td>
+<td style="text-align:left;">
+Created prepare_gtex page.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/7832996a6ce7b8272f456be703f80e9a1e240028/analysis/prepare_gtex.Rmd" target="_blank">7832996</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-25
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/prepare_gtex.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/148f56ad0fc2c47e9581314ddc0d6aeff38eb56b/analysis/prepare_gtex.Rmd" target="_blank">148f56a</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-25
+</td>
+<td style="text-align:left;">
+Added workflowr files.
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<p>Here we prepare the GTEx gene expression data (read counts) for subsequent topic modeling analyses. We also run PCA on the read counts as a “sanity check” that these data can be used to identify different tissue types.</p>
+<p>Before running these steps on your computer, you need to retrieve the following two files from the <a href="https://www.gtexportal.org">GTEx Portal</a>, and save these files to the “data” folder in your local copy of the git repository:</p>
+<pre><code>GTEx_v7_Annotations_SampleAttributesDS.txt
+GTEx_Analysis_2016-01-15_v7_RNASeQCv1.1.8_gene_reads.gct.gz</code></pre>
+<p>I ran this analysis interactively on the RCC cluster (midway2) by running these commands:</p>
+<pre><code>sinteractive --partition=broadwl --exclusive --time=24:00:00
+module load R/3.5.1
+R --no-save</code></pre>
+<p>And then I ran the following lines of code once inside the R environment:</p>
+<pre class="r"><code>library(workflowr)
+wflow_build(&quot;prepare_gtex.Rmd&quot;,local = TRUE,view = FALSE,verbose = TRUE)</code></pre>
+<p>After I am satisfied with the results, I run the following to commit the analysis:</p>
+<pre class="r"><code>wflow_publish(&quot;prepare_gtex.Rmd&quot;,view = FALSE,verbose = TRUE)</code></pre>
+<div id="analysis-settings" class="section level2">
+<h2>Analysis settings</h2>
+<p>These three variables specify the locations of the GTEx data files. It is assumed that the data files are all found inside the <code>data.dir</code> directory. Variable <code>sample.file</code> specifies the name of the sample attributes file, and <code>counts.file</code> specifies the name of the read count file.</p>
+<pre class="r"><code>data.dir     &lt;- file.path(&quot;..&quot;,&quot;data&quot;)
+samples.file &lt;- &quot;GTEx_v7_Annotations_SampleAttributesDS.txt&quot;
+counts.file  &lt;- &quot;GTEx_Analysis_2016-01-15_v7_RNASeQCv1.1.8_gene_reads.gct.gz&quot;</code></pre>
+<p>These three variables specify the names of the outputted CSV files: the processed read count data, and the “rough” estimates of the non-negative factors and loadings.</p>
+<pre class="r"><code>out.dir         &lt;- file.path(&quot;..&quot;,&quot;output&quot;)
+counts.out.file &lt;- &quot;gtex.csv&quot;
+factors.file    &lt;- &quot;gtex_factors_rough.csv&quot;
+loadings.file   &lt;- &quot;gtex_loadings_rough.csv&quot;</code></pre>
+<p>The number of factors (“topics”) in the non-negative matrix factorization. K = 20 is the number that Kushal <em>et al</em> used in their <em>PLoS Genetics</em> paper.</p>
+<pre class="r"><code>K &lt;- 20</code></pre>
+</div>
+<div id="set-up-environment" class="section level2">
+<h2>Set up environment</h2>
+<p>Load several packages and functions used in analysis of the GTEx data. The NNLM package is used to compute rough estimates of the non-negative factors.</p>
+<p>The readr package is used because it is much faster than the “read.csv” base function for reading the read count data from the CSV file. The rsvd package is used to quickly compute PCs from the read count data.</p>
+<pre class="r"><code>library(readr)
+library(rsvd)
+library(ggplot2)
+library(cowplot)
+library(NNLM)
+source(file.path(&quot;..&quot;,&quot;code&quot;,&quot;gtex.R&quot;))</code></pre>
+</div>
+<div id="load-and-prepare-data" class="section level2">
+<h2>Load and prepare data</h2>
+<p>The read count data are imported as a matrix, with one row per tissue sample and one column per gene. See the comments accompanying the <code>read.gtex.data</code> function for more details about the steps taken to prepare the GTEx data.</p>
+<pre class="r"><code>samples.file &lt;- file.path(data.dir,samples.file)
+counts.file  &lt;- file.path(data.dir,counts.file)
+out          &lt;- read.gtex.data(samples.file,counts.file)
+samples      &lt;- out$samples
+counts       &lt;- out$counts
+rm(out)</code></pre>
+</div>
+<div id="get-overview-of-gene-expression-data" class="section level2">
+<h2>Get overview of gene expression data</h2>
+<p>Unlike single-cell RNA-seq data, these read counts are not sparse; over half the read counts are non-zero.</p>
+<pre class="r"><code>cat(sprintf(&quot;Number of genes: %d\n&quot;,ncol(counts)))
+cat(sprintf(&quot;Number of samples: %d\n&quot;,nrow(counts)))
+cat(sprintf(&quot;Proportion of counts that are non-zero: %0.1f%%.\n&quot;,
+            100*mean(counts &gt; 0)))
+cat(sprintf(&quot;Number of tissue types (general, specific): %d, %d\n&quot;,
+            nlevels(samples$general),nlevels(samples$specific)))
+# Number of genes: 55863
+# Number of samples: 11688
+# Proportion of counts that are non-zero: 51.6%.
+# Number of tissue types (general, specific): 30, 53</code></pre>
+</div>
+<div id="compute-principal-components" class="section level2">
+<h2>Compute principal components</h2>
+<p>Compute the top 20 PCs from the read counts matrix.</p>
+<pre class="r"><code>timing &lt;- system.time(
+  out &lt;- rpca(counts,k = 20,center = TRUE,scale = FALSE,retx = TRUE))
+cat(sprintf(&quot;Computation took %0.2f seconds.\n&quot;,timing[&quot;elapsed&quot;]))
+pcs        &lt;- as.data.frame(out$x)
+names(pcs) &lt;- paste0(&quot;PC&quot;,1:20)
+rm(out)
+# Computation took 71.62 seconds.</code></pre>
+</div>
+<div id="plot-the-top-pcs" class="section level2">
+<h2>Plot the top PCs</h2>
+<p>The second PC separates out blood cells, suggesting that gene expression in blood cells is very different from other tissues.</p>
+<pre class="r"><code>tissues &lt;- samples$general
+plot.gtex.pcs(tissues,pcs)</code></pre>
+<p><img src="figure/prepare_gtex.Rmd/plot-pcs-1-2-1.png" width="864" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of plot-pcs-1-2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/d377b6bc6ea74119c24eb0e096a48b580bd4a111/docs/figure/prepare_gtex.Rmd/plot-pcs-1-2-1.png" target="_blank">d377b6b</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-29
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/3655e04f0418fd12881a0673818c60838dbba028/docs/figure/prepare_gtex.Rmd/plot-pcs-1-2-1.png" target="_blank">3655e04</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-26
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/78e3484c00e10f92e718bbd8a21b5a135d92923b/docs/figure/prepare_gtex.Rmd/plot-pcs-1-2-1.png" target="_blank">78e3484</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-26
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<p>Other tissues, such as skin, breast and muscle, also cluster in top PCs, but in many cases the clustering is not as strong.</p>
+<pre class="r"><code>plot_grid(plot.gtex.pcs(tissues,pcs,&quot;PC3&quot;,&quot;PC4&quot;,guide = &quot;none&quot;),
+          plot.gtex.pcs(tissues,pcs,&quot;PC5&quot;,&quot;PC6&quot;,guide = &quot;none&quot;),
+          plot.gtex.pcs(tissues,pcs,&quot;PC7&quot;,&quot;PC8&quot;,guide = &quot;none&quot;),
+          plot.gtex.pcs(tissues,pcs,&quot;PC9&quot;,&quot;PC10&quot;,guide = &quot;none&quot;),
+          nrow = 2,ncol = 2)</code></pre>
+<p><img src="figure/prepare_gtex.Rmd/plot-pcs-3-10-1.png" width="720" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of plot-pcs-3-10-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/d377b6bc6ea74119c24eb0e096a48b580bd4a111/docs/figure/prepare_gtex.Rmd/plot-pcs-3-10-1.png" target="_blank">d377b6b</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-29
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/3655e04f0418fd12881a0673818c60838dbba028/docs/figure/prepare_gtex.Rmd/plot-pcs-3-10-1.png" target="_blank">3655e04</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-26
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/stephenslab/topics/blob/78e3484c00e10f92e718bbd8a21b5a135d92923b/docs/figure/prepare_gtex.Rmd/plot-pcs-3-10-1.png" target="_blank">78e3484</a>
+</td>
+<td style="text-align:left;">
+Peter Carbonetto
+</td>
+<td style="text-align:left;">
+2018-12-26
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+</div>
+<div id="compute-rough-estimates-of-non-negative-factors" class="section level2">
+<h2>Compute rough estimates of non-negative factors</h2>
+<p>Fit the non-negative matrix factorization using the sequential coordinate descent (“scd”) algorithm. The fitting is prematurely terminated to provide only very rough estimates of the factors.</p>
+<pre class="r"><code>timing &lt;- system.time(
+  fit &lt;- nnmf(counts,K,method = &quot;scd&quot;,loss = &quot;mkl&quot;,rel.tol = 1e-8,
+              n.threads = 0,max.iter = 10,inner.max.iter = 4,trace = 1,
+              verbose = 2))
+# Warning in system.time(out &lt;- .Call(&quot;NNLM_nnmf&quot;, A, as.integer(k),
+# init.mask$Wi, : Target tolerance not reached. Try a larger max.iter.
+cat(sprintf(&quot;Computation took %0.2f seconds.\n&quot;,timing[&quot;elapsed&quot;]))
+# 
+#  Iteration |        MSE |        MKL |     Target |  Rel. Err.
+# --------------------------------------------------------------
+#          1 | 200392114.9961 |   481.3944 |   481.3944 |          2
+#          2 | 110755809.0349 |   322.8117 |   322.8117 |        0.4
+#          3 | 88041459.1590 |   259.9919 |   259.9919 |        0.2
+#          4 | 84107860.8859 |   208.2956 |   208.2956 |        0.2
+#          5 | 78993375.2753 |   156.4566 |   156.4566 |        0.3
+#          6 | 74757323.5739 |   135.8308 |   135.8308 |        0.1
+#          7 | 70441827.9511 |   128.1778 |   128.1778 |       0.06
+#          8 | 68027964.5070 |   124.6067 |   124.6067 |       0.03
+#          9 | 66895750.2432 |   122.3565 |   122.3565 |       0.02
+#         10 | 66406164.7449 |   120.9873 |   120.9873 |       0.01
+# --------------------------------------------------------------
+#  Iteration |        MSE |        MKL |     Target |  Rel. Err.
+# 
+# Computation took 845.68 seconds.</code></pre>
+</div>
+<div id="write-results-to-file" class="section level2">
+<h2>Write results to file</h2>
+<p>Write the post-processed read count data to a CSV file.</p>
+<pre class="r"><code>counts.out.file &lt;- file.path(out.dir,counts.out.file)
+counts          &lt;- as.data.frame(counts)
+write_csv(counts,counts.out.file,col_names = FALSE)</code></pre>
+<p>Write the non-negative factors to CSV files.</p>
+<pre class="r"><code>factors.file  &lt;- file.path(out.dir,factors.file)
+loadings.file &lt;- file.path(out.dir,loadings.file)
+F &lt;- t(fit$H)
+F &lt;- round(F,digits = 4)
+F &lt;- as.data.frame(F)
+L &lt;- fit$W
+L &lt;- round(L,digits = 4)
+L &lt;- as.data.frame(L)
+write_csv(F,factors.file,col_names = FALSE)
+write_csv(L,loadings.file,col_names = FALSE)</code></pre>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()
+# R version 3.5.1 (2018-07-02)
+# Platform: x86_64-pc-linux-gnu (64-bit)
+# Running under: Scientific Linux 7.4 (Nitrogen)
+# 
+# Matrix products: default
+# BLAS/LAPACK: /software/openblas-0.2.19-el7-x86_64/lib/libopenblas_haswellp-r0.2.19.so
+# 
+# locale:
+#  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+# [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+# 
+# attached base packages:
+# [1] stats     graphics  grDevices utils     datasets  methods   base     
+# 
+# other attached packages:
+# [1] NNLM_0.4.2      cowplot_0.9.3   ggplot2_3.1.0   rsvd_1.0.0     
+# [5] readr_1.1.1     workflowr_1.1.1
+# 
+# loaded via a namespace (and not attached):
+#  [1] Rcpp_1.0.0        bindr_0.1.1       pillar_1.3.0     
+#  [4] compiler_3.5.1    git2r_0.23.0      plyr_1.8.4       
+#  [7] R.methodsS3_1.7.1 R.utils_2.7.0     tools_3.5.1      
+# [10] digest_0.6.18     evaluate_0.12     tibble_1.4.2     
+# [13] gtable_0.2.0      lattice_0.20-38   pkgconfig_2.0.2  
+# [16] rlang_0.3.0.1     Matrix_1.2-15     yaml_2.2.0       
+# [19] bindrcpp_0.2.2    withr_2.1.2       stringr_1.3.1    
+# [22] dplyr_0.7.8       knitr_1.20        hms_0.4.2        
+# [25] tidyselect_0.2.5  rprojroot_1.3-2   grid_3.5.1       
+# [28] glue_1.3.0        R6_2.3.0          rmarkdown_1.10   
+# [31] purrr_0.2.5       magrittr_1.5      whisker_0.3-2    
+# [34] backports_1.1.2   scales_1.0.0      htmltools_0.3.6  
+# [37] assertthat_0.2.0  colorspace_1.3-2  labeling_0.3     
+# [40] stringi_1.2.4     lazyeval_0.2.1    munsell_0.5.0    
+# [43] crayon_1.3.4      R.oo_1.22.0</code></pre>
+</div>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

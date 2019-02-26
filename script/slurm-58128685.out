@@ -1,0 +1,2 @@
+Running fit_gtex_betanmf.m
+/tmp/slurmd/job58128685/slurm_script: line 14: 17952 Bus error               matlab -nodisplay -nosplash -nodesktop -r "run('fit_gtex_simulation_betanmf.m'); exit;" > ../output/fit_gtex_simulation_betanmf.out

@@ -1,0 +1,151 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=mex 2017.5.23)  24 FEB 2019 20:27
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**nmfccd_helper.c
+(./nmfccd_helper.c
+This is MeX  Version 1.05  18 XII 1993  (B. Jackowski & M. Ry\'cko)
+! You can't use `macro parameter character #' in horizontal mode.
+l.2 #
+     include <string.h>
+? 
+! Interruption.
+<to be read again> 
+                   i
+l.2 #i
+      nclude <string.h>
+? 
+! You can't use `macro parameter character #' in horizontal mode.
+l.3 #
+     include <math.h>
+? 
+! You can't use `macro parameter character #' in horizontal mode.
+l.4 #
+     include <mex.h>
+? 
+! You can't use `macro parameter character #' in vertical mode.
+l.6 #
+     define max(a,b) ((a) > (b) ? (a) : (b))
+? 
+! Missing $ inserted.
+<inserted text> 
+                $
+<to be read again> 
+                   _
+l.10 ...(const double* source, double* dest, size_
+                                                  t n);
+? 
+! Missing $ inserted.
+<inserted text> 
+                $
+<to be read again> 
+                   \par 
+l.17 
+     
+? 
+
+Overfull \hbox (6.59106pt too wide) in paragraph at lines 8--17
+\teni wt; double \tensy ^^C \teni wht; constdouble \tensy ^^C \teni vt; double 
+\tensy ^^C \teni H; doublee\tenrm ); \teni intccd\tenrm (\teni intn; intm; intk
+; constdouble \tensy ^^C \teni V; double \tensy ^^C \teni W; double \tensy ^^C|
+
+
+\hbox(7.5+2.5)x469.75499, glue set - 1.0
+.\teni w
+.\kern0.26909
+.\teni t
+.\teni ;
+.\glue(\thinmuskip) 1.66663
+.etc.
+
+
+Overfull \hbox (7.72865pt too wide) in paragraph at lines 23--29
+[]\tenrm // GET IN-PUTS // ---------- const do-uble* V = mxGetPr(prhs[0]); cons
+t do-uble* W0 = mxGetPr(prhs[1]);|
+
+\hbox(7.5+2.5)x469.75499, glue set - 1.0
+.\hbox(0.0+0.0)x20.0
+.\tenrm /
+.\tenrm /
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\tenrm G
+.etc.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+<to be read again> 
+                   _
+l.37   const size_
+                  t n = mxGetM(prhs[0]);
+? 
+! Missing $ inserted.
+<inserted text> 
+                $
+<to be read again> 
+                   \par 
+l.40 
+     
+? 
+! Undefined control sequence.
+l.57 ...rintf("iter objective (cost fn) max.diff\n
+                                                  ");
+? 
+! Undefined control sequence.
+l.58 ...rintf("---- ------------------- --------\n
+                                                  ");
+? 
+! Missing $ inserted.
+<inserted text> 
+                $
+<to be read again> 
+                   _
+l.68 ...(const double* source, double* dest, size_
+                                                  t n) {
+? 
+! Missing $ inserted.
+<inserted text> 
+                $
+<to be read again> 
+                   \par 
+l.71 
+     
+? 
+! Misplaced alignment tab character &.
+l.115 // Hsieh &
+                 Dhillon (2011).
+? 
+! Interruption.
+<to be read again> 
+                    
+l.115 // Hsieh & 
+                 Dhillon (2011).
+? quit
+OK, entering \batchmode...
+! Misplaced alignment tab character &.
+l.153     if ((dh < tol) &
+                          & (dw < tol))
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+! Misplaced alignment tab character &.
+l.153     if ((dh < tol) &&
+                            (dw < tol))
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+)
+! Emergency stop.
+<*> nmfccd_helper.c
+                   
+*** (job aborted, no legal \end found)
+
+No pages of output.

@@ -1,0 +1,47 @@
+Loading GTEx simulation data.
+Loaded 11688 x 55863 count matrix.
+Loading initial estimates of factors and loadings.
+Loaded 55863 x 20 factors matrix.
+Fitting multinomial topic model using maptpx.
+
+Estimating on a 11688 samples collection.
+Fitting the 20 clusters/topics model.
+log posterior increase: 315351777291.072, 947537297.7783, 288390226.6348, 397259417.0186, 360893925.7832, 134892900.458, 74299769.3857, 44155587.9775, 31646824.5312, 23660952.6748, 17743909.1836, 13878300.376, 10759670.1631, 8164246.1045, 6579074.0352, 5647785.4414, 5029309.293, 4730852.9834, 4671934.0381, 4556402.8994, done. (L = -5535567318980.14)
+Computation took 46273.43 seconds.
+Compute loglikelihood of rough fit
+method type: multinom
+ 
+	poisson_ll :-2.527085324929
+ 
+	multinom_ll:-5535547915113.878906250000
+Writing results to file.
+Session info:
+R version 3.5.1 (2018-07-02)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Scientific Linux 7.4 (Nitrogen)
+
+Matrix products: default
+BLAS/LAPACK: /software/openblas-0.2.19-el7-x86_64/lib/libopenblas_haswellp-r0.2.19.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] maptpx_1.9-5 readr_1.3.1 
+
+loaded via a namespace (and not attached):
+ [1] compiler_3.5.1    R6_2.3.0          hms_0.4.2         tools_3.5.1      
+ [5] pillar_1.3.1      tibble_2.0.1      Rcpp_1.0.0        crayon_1.3.4     
+ [9] slam_0.1-43       SQUAREM_2017.10-1 boot_1.3-20       pkgconfig_2.0.2  
+[13] rlang_0.3.1.9000 
+> proc.time()
+     user    system   elapsed 
+44511.372  2573.271 47106.922 
