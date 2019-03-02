@@ -1,0 +1,9 @@
+##
+
+method		init 		time(s) 	mean least square
+oracle 						0.9993854013831657
+NMF_HALS	nndsvd		10.2		0.9935328734741082
+rNMF_HALS	nndsvd		1		0.9935328737950804
+skdnmf		nndsvd		10.5		0.9935330769531381
+skdnmf		random		24		0.9935238094626783
+
