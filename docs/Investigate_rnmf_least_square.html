@@ -11789,6 +11789,8 @@ div#notebook {
 </li>
 <li><p><code>skd.nmf</code> solves using either <code>mu</code> or <code>cd</code> update with <code>cd</code> being faster. Documentation is <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.NMF.html">https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.NMF.html</a></p>
 </li>
+<li><p>Note: the default <code>tol</code> is <code>1e-04</code> for <code>NMF HALS</code> and <code>1e-05</code> for <code>Randomized NMF HALS</code></p>
+</li>
 </ul>
 
 </div>
@@ -11819,14 +11821,17 @@ div#notebook {
 <li><p>Initialization is quite important for those methods (and they seem to prefer different initialization methods), and there seems to be "tradeoff" between speed and loss. I think it is only because starting at a bad spot leads to early stopping at a bad critical point.</p>
 </li>
 <li><p>If we only consider result that beats oracle, then the computation time (in seconds) is:</p>
-
-<pre><code>txt
-0.319 (randomized nmf hals; init =  nndsvd) 
-1.608 (skdnmf cd; init = random)
-2.117 (nmf hals; init = nndsvda)
-2.739 (skdnmf cd; init =  nndsvd)</code></pre>
 </li>
 </ul>
+
+<pre><code>txt
+
+method          init            time(s)         mean least square
+oracle                                          0.9993854013831657
+NMF_HALS        nndsvd          10.2            0.9935328734741082
+rNMF_HALS       nndsvd          1               0.9935328737950804
+skdnmf          nndsvd          10.5            0.9935330769531381
+skdnmf          random          24              0.9935238094626783</code></pre>
 <h4 id="See-code-below-for-the-comparisons">See code below for the comparisons<a class="anchor-link" href="#See-code-below-for-the-comparisons">&#182;</a></h4>
 </div>
 </div>
@@ -11978,11 +11983,11 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">A</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">compute_nmf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">rank</span><span class="o">=</span><span class="n">r</span><span class="p">,</span><span class="n">init</span> <span class="o">=</span> <span class="s1">&#39;nndsvd&#39;</span><span class="p">)</span>
+<span class="n">A</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">compute_nmf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">rank</span><span class="o">=</span><span class="n">r</span><span class="p">,</span><span class="n">init</span> <span class="o">=</span> <span class="s1">&#39;nndsvd&#39;</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span> <span class="mi">10000</span><span class="p">)</span>
 <span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;runtime: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">runtime</span><span class="p">))</span>
 <span class="n">ls_ll</span> <span class="o">=</span> <span class="n">compute_least_sqr_loss</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">A</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">W</span><span class="p">))</span>
@@ -12003,8 +12008,8 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>runtime: 2.1933178901672363
-mean least square ll: 0.9957983116547521
+<pre>runtime: 10.211270093917847
+mean least square ll: 0.9935328734741082
 </pre>
 </div>
 </div>
@@ -12023,11 +12028,11 @@ mean least square ll: 0.9957983116547521
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">A</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">compute_nmf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">rank</span><span class="o">=</span><span class="n">r</span><span class="p">,</span><span class="n">init</span> <span class="o">=</span> <span class="s1">&#39;nndsvda&#39;</span><span class="p">)</span>
+<span class="n">A</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">compute_nmf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">rank</span><span class="o">=</span><span class="n">r</span><span class="p">,</span><span class="n">init</span> <span class="o">=</span> <span class="s1">&#39;nndsvda&#39;</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span> <span class="mi">10000</span><span class="p">)</span>
 <span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;runtime: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">runtime</span><span class="p">))</span>
 <span class="n">ls_ll</span> <span class="o">=</span> <span class="n">compute_least_sqr_loss</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">A</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">W</span><span class="p">))</span>
@@ -12048,8 +12053,8 @@ mean least square ll: 0.9957983116547521
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>runtime: 0.5150420665740967
-mean least square ll: 1.12213272057081
+<pre>runtime: 0.5625598430633545
+mean least square ll: 1.1221327205708158
 </pre>
 </div>
 </div>
@@ -12076,11 +12081,11 @@ mean least square ll: 1.12213272057081
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">A</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">compute_rnmf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">rank</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">oversample</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">init</span> <span class="o">=</span> <span class="s1">&#39;nndsvd&#39;</span><span class="p">,</span><span class="n">random_state</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">A</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">compute_rnmf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">rank</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">oversample</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">init</span> <span class="o">=</span> <span class="s1">&#39;nndsvd&#39;</span><span class="p">,</span><span class="n">random_state</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">tol</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span> <span class="mi">10000</span><span class="p">)</span>
 <span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;runtime: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">runtime</span><span class="p">))</span>
 <span class="n">ls_ll</span> <span class="o">=</span> <span class="n">compute_least_sqr_loss</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">A</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">W</span><span class="p">))</span>
@@ -12102,8 +12107,8 @@ mean least square ll: 1.12213272057081
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>runtime: 0.33833765983581543
-mean least square ll: 0.9957983677649485
+<pre>runtime: 1.0360560417175293
+mean least square ll: 0.9935328737950804
 min element of X:  0.6831562022970761
 </pre>
 </div>
@@ -12123,11 +12128,11 @@ min element of X:  0.6831562022970761
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">A</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">compute_rnmf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">rank</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">oversample</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">init</span> <span class="o">=</span> <span class="s1">&#39;nndsvda&#39;</span><span class="p">,</span><span class="n">random_state</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">A</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">compute_rnmf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">rank</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">oversample</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">init</span> <span class="o">=</span> <span class="s1">&#39;nndsvda&#39;</span><span class="p">,</span><span class="n">random_state</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">tol</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span> <span class="mi">10000</span><span class="p">)</span>
 <span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;runtime: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">runtime</span><span class="p">))</span>
 <span class="n">ls_ll</span> <span class="o">=</span> <span class="n">compute_least_sqr_loss</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">A</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">W</span><span class="p">))</span>
@@ -12148,7 +12153,7 @@ min element of X:  0.6831562022970761
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>runtime: 0.23889899253845215
+<pre>runtime: 0.21465015411376953
 mean least square ll: 1.1222547243541725
 </pre>
 </div>
@@ -12169,11 +12174,11 @@ mean least square ll: 1.1222547243541725
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">A</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">compute_rnmf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">rank</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">oversample</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span><span class="n">init</span> <span class="o">=</span> <span class="s1">&#39;nndsvda&#39;</span><span class="p">,</span><span class="n">random_state</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">A</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">compute_rnmf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">rank</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">oversample</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span><span class="n">init</span> <span class="o">=</span> <span class="s1">&#39;nndsvda&#39;</span><span class="p">,</span><span class="n">random_state</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">tol</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span> <span class="mi">10000</span><span class="p">)</span>
 <span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;runtime: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">runtime</span><span class="p">))</span>
 <span class="n">ls_ll</span> <span class="o">=</span> <span class="n">compute_least_sqr_loss</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">A</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">W</span><span class="p">))</span>
@@ -12194,7 +12199,7 @@ mean least square ll: 1.1222547243541725
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>runtime: 0.23014187812805176
+<pre>runtime: 0.23541998863220215
 mean least square ll: 1.1222627378064045
 </pre>
 </div>
@@ -12222,12 +12227,12 @@ mean least square ll: 1.1222627378064045
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="c1">#print(&quot;fit&quot;)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">NMF</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="s2">&quot;nndsvd&quot;</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-04</span><span class="p">,</span> <span class="n">beta_loss</span><span class="o">=</span><span class="s1">&#39;frobenius&#39;</span><span class="p">,</span><span class="n">solver</span> <span class="o">=</span> <span class="s2">&quot;cd&quot;</span><span class="p">,</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">NMF</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="s2">&quot;nndsvd&quot;</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-05</span><span class="p">,</span> <span class="n">beta_loss</span><span class="o">=</span><span class="s1">&#39;frobenius&#39;</span><span class="p">,</span><span class="n">solver</span> <span class="o">=</span> <span class="s2">&quot;cd&quot;</span><span class="p">,</span>
                 <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
 <span class="c1">#print(&quot;transform&quot;)</span>
@@ -12255,8 +12260,8 @@ mean least square ll: 1.1222627378064045
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>runtime: 2.972970962524414
-mean least square ll: 0.9945736447028507
+<pre>runtime: 10.500746011734009
+mean least square ll: 0.9935330769531381
 </pre>
 </div>
 </div>
@@ -12275,12 +12280,12 @@ mean least square ll: 0.9945736447028507
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="c1">#print(&quot;fit&quot;)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">NMF</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="s2">&quot;nndsvda&quot;</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-04</span><span class="p">,</span> <span class="n">beta_loss</span><span class="o">=</span><span class="s1">&#39;frobenius&#39;</span><span class="p">,</span><span class="n">solver</span> <span class="o">=</span> <span class="s2">&quot;cd&quot;</span><span class="p">,</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">NMF</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="s2">&quot;nndsvda&quot;</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-05</span><span class="p">,</span> <span class="n">beta_loss</span><span class="o">=</span><span class="s1">&#39;frobenius&#39;</span><span class="p">,</span><span class="n">solver</span> <span class="o">=</span> <span class="s2">&quot;cd&quot;</span><span class="p">,</span>
                 <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
 <span class="c1">#print(&quot;transform&quot;)</span>
@@ -12308,8 +12313,8 @@ mean least square ll: 0.9945736447028507
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>runtime: 0.4132821559906006
-mean least square ll: 4.535813312872925
+<pre>runtime: 0.6448521614074707
+mean least square ll: 1.1168937849426908
 </pre>
 </div>
 </div>
@@ -12328,12 +12333,12 @@ mean least square ll: 4.535813312872925
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="c1">#print(&quot;fit&quot;)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">NMF</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-04</span><span class="p">,</span> <span class="n">beta_loss</span><span class="o">=</span><span class="s1">&#39;frobenius&#39;</span><span class="p">,</span><span class="n">solver</span> <span class="o">=</span> <span class="s2">&quot;cd&quot;</span><span class="p">,</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">NMF</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-06</span><span class="p">,</span> <span class="n">beta_loss</span><span class="o">=</span><span class="s1">&#39;frobenius&#39;</span><span class="p">,</span><span class="n">solver</span> <span class="o">=</span> <span class="s2">&quot;cd&quot;</span><span class="p">,</span>
                 <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
 <span class="c1">#print(&quot;transform&quot;)</span>
@@ -12361,8 +12366,53 @@ mean least square ll: 4.535813312872925
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>runtime: 1.8955681324005127
-mean least square ll: 0.9975936444207547
+<pre>runtime: 24.33019208908081
+mean least square ll: 0.9935238094626783
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="c1">#print(&quot;fit&quot;)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">NMF</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mi">5</span><span class="o">*</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">beta_loss</span><span class="o">=</span><span class="s1">&#39;frobenius&#39;</span><span class="p">,</span><span class="n">solver</span> <span class="o">=</span> <span class="s2">&quot;cd&quot;</span><span class="p">,</span>
+                <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="c1">#print(&quot;transform&quot;)</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="n">runtime</span> <span class="o">=</span> <span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;runtime: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">runtime</span><span class="p">))</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">components_</span> 
+<span class="n">A</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">T</span>
+<span class="n">W</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">T</span>
+<span class="n">ls_ll</span> <span class="o">=</span> <span class="n">compute_least_sqr_loss</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">A</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">W</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mean least square ll: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ls_ll</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>runtime: 2.54731822013855
+mean least square ll: 0.9949997414769206
 </pre>
 </div>
 </div>
