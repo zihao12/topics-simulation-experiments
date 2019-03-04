@@ -2,7 +2,7 @@
 
 #SBATCH --partition=broadwl
 #SBATCH --exclusive
-#SBATCH --time=02:00:00
+#SBATCH --time=10:00:00
 
 # For reproducibility, I add version numbers to the "module load" calls.
 module load matlab/2018b

@@ -7,8 +7,6 @@ e_tol = 1
 print("p_tol: " + str(p_tol))
 print("e_tol: " + str(e_tol))
 
-logptol = 4
-logetol = 0
 # SCRIPT SETTINGS
 # ---------------
 # These variables specify the names of the input files.
@@ -17,16 +15,19 @@ read_counts_file   = "gtex_simulation_nnlm.csv"
 init_factors_file  = "gtex_simulation_rough_factors.csv"
 init_loadings_file = "gtex_simulation_rough_loadings.csv"
 
-# # # ## only for testing
-# read_counts_file   = "test.csv"
-# init_factors_file  = "test_factors.csv"
-# init_loadings_file = "test_loadings.csv"
-
 # These variables specify the names of the output files.
 out_dir           = "../../topics-simulation-bigdata/output/"
-factors_out_file  = "gtex_simulation_factors_skdlda_ptol_" + str(logptol) + "_etol_" + str(logetol) +".csv"
-loadings_out_file = "gtex_simulation_loadings_skdlda_ptol_" + str(logptol)+ "_etol_"+ str(logetol) +".csv"
-#result_out_file = "gtex_perform_skdlda_ptol_" + str(logptol)+ "_etol_"+ str(logetol) +".pkl"
+factors_out_file  = "gtex_simulation_factors_skdlda.csv"
+loadings_out_file = "gtex_simulation_loadings_skdlda.csv"
+
+# # ## only for testing
+#read_counts_file   = "test.csv"
+#init_factors_file  = "test_factors.csv"
+#init_loadings_file = "test_loadings.csv"
+#factors_out_file  = "test_simulation_factors_skdlda.csv"
+#loadings_out_file  = "test_simulation_loadings_skdlda.csv"
+#
+
 
 # SET UP ENVIRONMENT
 # ------------------
@@ -78,8 +79,8 @@ model = LDA(n_components=K, random_state=0,\
 print("start fitting")
 start = time.time()
 model.fit(X.T)
-L2 = model.transform(X.T)
-F2 = model.components_
+L1 = model.transform(X.T)
+F1 = model.components_ / model.components_.sum(axis=1)[:, np.newaxis]
 runtime = time.time() - start
 print("finish fitting after: " + str(runtime))
 
@@ -99,8 +100,8 @@ print("poisson loglikelihood	: " + str(out["poisson_ll"]))
 print("multinomial loglikelihood: " + str(out["multinom_ll"]))
 
 ## write skdlda files to file
-np.savetxt(out_dir+factors_out_file, A_lda, delimiter=",")
-np.savetxt(out_dir+loadings_out_file, W_lda.T, delimiter=",")
+np.savetxt(out_dir+factors_out_file, A, delimiter=",")
+np.savetxt(out_dir+loadings_out_file, W.T, delimiter=",")
 # with open(out_dir + result_out_file, "wb") as f:
 # 	pickle.dump(result, f)
 ## session info

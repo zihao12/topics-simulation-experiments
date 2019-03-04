@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH --partition=broadwl
-#SBATCH --exclusive
-#SBATCH --time=16:00:00
+#SBATCH --partition=mstephens
+#SBATCH --mem=128G
+#SBATCH --time=36:00:00
 
 # For reproducibility, I add version numbers to the "module load" calls.
 module load gcc/6.3.0

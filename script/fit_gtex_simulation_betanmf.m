@@ -11,16 +11,17 @@ readcountsfile   = 'gtex_simulation_nnlm.csv';
 initfactorsfile  = 'gtex_simulation_rough_factors.csv';
 initloadingsfile = 'gtex_simulation_rough_loadings.csv';
 
-% readcountsfile   = 'test.csv';
-% initfactorsfile  = 'test_factors.csv';
-% initloadingsfile = 'test_loadings.csv';
-
-
 % These variables specify the names of the output files.
 outdir          = fullfile('../../topics-simulation-bigdata','output');
 factorsoutfile  = 'gtex_simulation_factors_betanmf.csv';
 loadingsoutfile = 'gtex_simulation_loadings_betanmf.csv';
 
+%readcountsfile   = 'test.csv';
+%initfactorsfile  = 'test_factors.csv';
+%initloadingsfile = 'test_loadings.csv';
+%factorsoutfile  = 'test_simulation_factors_betanmf.csv';
+%loadingsoutfile = 'test_simulation_loadings_betanmf.csv';
+%
 % SET UP ENVIRONMENT
 % ------------------
 addpath ../code
@@ -57,8 +58,8 @@ fprintf('Computation took %0.2f seconds.\n',timing);
 % Convert the Poisson model parameters to the parameters for the
 % multinomial model.
 % [F L] = poisson2multinom(B',A);
-F = B'
-L = A
+F = B';
+L = A;
 
 fprintf('Writing results to file.\n');
 factorsoutfile  = fullfile(outdir,factorsoutfile);
@@ -69,12 +70,12 @@ csvwrite(loadingsoutfile,L);
 
 
 % Compute the multinomial likelihood for the nnmf solution.
-fprintf("Compute loglikelihood of rough fit\n")
-[type,multinom_ll, pois_ll] = compute_loglik(counts',F,L')
+fprintf("Compute loglikelihood of fit\n");
+[type,multinom_ll, pois_ll] = compute_loglik(counts',F,L');
 
-fprintf("method type: %s\n", type) 
-fprintf("poisson_ll  : %s\n", pois_ll) 
-fprintf("multinom_ll : %s\n", multinom_ll) 
+fprintf('method type: %s\n', type);
+fprintf('poisson_ll  : %s\n', pois_ll); 
+fprintf('multinom_ll : %s\n', multinom_ll); 
 
 % f = loglikmultinom(counts,F,L);
 % fprintf('Multinomial likelihood at nnmf solution: %0.12f\n',f);

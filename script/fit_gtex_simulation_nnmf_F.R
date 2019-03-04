@@ -19,14 +19,16 @@ init.loadings.file <- "gtex_simulation_rough_loadings.csv"
 
 # These variables specify the names of the output files.
 out.dir           <- file.path("../../topics-simulation-bigdata","output")
-factors.out.file  <- "gtex_simulation_factors_nnmf.csv"
-loadings.out.file <- "gtex_simulation_loadings_nnmf.csv"
+factors.out.file  <- "gtex_simulation_factors_nnmf_F.csv"
+loadings.out.file <- "gtex_simulation_loadings_nnmf_F.csv"
 
-read.counts.file  <- "test.csv"
-init.factors.file <- "test_factors.csv"
-init.loadings.file <- "test_loadings.csv"
-factors.out.file  <- "test_factors_nnmf.csv"
-loadings.out.file <- "test_loadings_nnmf.csv"
+#read.counts.file  <- "test.csv"
+#init.factors.file <- "test_factors.csv"
+#init.loadings.file <- "test_loadings.csv"
+#factors.out.file  <- "test_factors_nnmf.csv"
+#loadings.out.file <- "test_loadings_nnmf.csv"
+
+
 # SET UP ENVIRONMENT
 # ------------------
 # Load packages and function definitions.
@@ -44,23 +46,16 @@ cat(sprintf("Loaded %d x %d count matrix.\n",nrow(counts),ncol(counts)))
 
 # LOAD INITIAL ESTIMATES
 # ----------------------
-cat("Loading initial estimates of factors and loadings.\n")
-init.factors.file  <- file.path(data.dir,init.factors.file)
-init.loadings.file <- file.path(data.dir,init.loadings.file)
-F0                 <- read.csv.matrix(init.factors.file)
-L0                 <- read.csv.matrix(init.loadings.file)
-cat(sprintf("Loaded %d x %d factors matrix, ",nrow(F0),ncol(F0)))
-cat(sprintf("and %d x %d loadings matrix.\n",nrow(L0),ncol(L0)))
 
 # Get the number of factors ("topics").
-K <- ncol(F0)
+K <- 20
 
 # RUN NMF OPTIMIZATION METHOD
 # ---------------------------
 cat("Fitting Poisson topic model using nnmf.\n")
 timing <- system.time(
-  fit <- nnmf(counts,K,init = list(W = L0,H = t(F0)),method = "scd",
-              loss = "mkl",rel.tol = 1e-8,n.threads = 0,max.iter = 200,
+  fit <- nnmf(counts,K,init = NULL,method = "scd",
+              loss = "mse",rel.tol = 1e-8,n.threads = 0,max.iter = 200,
               inner.max.iter = 4,trace = 1,verbose = 2))
 cat(sprintf("Computation took %0.2f seconds.\n",timing["elapsed"]))
 
@@ -72,11 +67,13 @@ cat(sprintf("Computation took %0.2f seconds.\n",timing["elapsed"]))
 F = t(fit$H)
 L = fit$W
 
-cat("Compute loglikelihood of rough fit\n")
+cat("Compute loglikelihood and mse\n")
 out = compute_ll(t(counts),F,t(L))
+mse = compute_mse(t(counts),F,t(L))
 cat(sprintf("method type: %s\n 
 	poisson_ll :%0.12f\n 
-	multinom_ll:%0.12f\n",out$type, out$pois_ll,out$multinom_ll))
+	multinom_ll:%0.12f\n
+	mse        :%0.12f\n",out$type, out$pois_ll,out$multinom_ll, mse))
 
 # WRITE NNMF RESULTS TO FILE
 # --------------------------

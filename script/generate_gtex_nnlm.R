@@ -6,18 +6,23 @@
 # ---------------
 # These variables specify the names of the input files.
 data.dir           <- file.path("../../topics-simulation-bigdata","output")
+read.counts.file   <- "gtex.csv"
 read.factors.file   <- "gtex_factors_nnmf.csv.gz"
 read.loadings.file   <- "gtex_loadings_nnmf.csv.gz"
-
-# read.factors.file   <- "test_factors.csv"
-# read.loadings.file   <- "test_loadings.csv"
-
 
 # These variables specify the names of the output files.
 out.dir           <- file.path("../../topics-simulation-bigdata","output")
 count.out.file  <- "gtex_simulation_nnlm.csv"
 factors.out.file  <- "gtex_simulation_rough_factors.csv"
 loadings.out.file <- "gtex_simulation_rough_loadings.csv"
+
+#read.counts.file   <- "test.csv"
+#read.factors.file   <- "test_factors.csv"
+#read.loadings.file   <- "test_loadings.csv"
+#count.out.file  <- "test_simulation_nnlm.csv"
+#factors.out.file  <- "test_rough_factors.csv"
+#loadings.out.file <- "test_rough_loadings.csv"
+
 
 # SET UP ENVIRONMENT
 # ------------------
@@ -27,6 +32,14 @@ library(NNLM)
 source(file.path("..","code","misc.R"))
 source(file.path("..","code","utility.R"))
 
+# LOAD DATA
+# --------------
+cat("Loading GTEx data.\n")
+read.counts.file <- file.path(data.dir,read.counts.file)
+counts <- read.csv.matrix(read.counts.file)
+cat(sprintf("Loaded %d x %d count matrix.\n",nrow(counts),ncol(counts)))
+
+
 # LOAD FITTED MODEL
 # --------------
 cat("Loading model.\n")
@@ -35,24 +48,45 @@ read.loadings.file <- file.path(data.dir,read.loadings.file)
 
 F <- read.csv.matrix(read.factors.file)
 L <- read.csv.matrix(read.loadings.file)
+
+# ## test
+# out = poisson2multinom(F,L)
+# F = out$F
+# L = out$L
+
+
 cat(sprintf("Loaded %d x %d factors matrix, ",nrow(F),ncol(F)))
 cat(sprintf("and %d x %d loadings matrix.\n",nrow(L),ncol(L)))
 
 K <- ncol(F)
+
 # GENERATE DATA
 # --------------
 cat("Generate data from Oracle\n")
+## need to give weight to loading (loading is from multinomial model)
+#weight = rowSums(counts)
+#L = diag(weight) %*% L
+
 X = generateForacle(F,t(L), seed = 12345)
 cat(sprintf("Generated %d x %d transpose count matrix\n",nrow(X),ncol(X)))
 
 # COMPUTE LOGLIKELIHOOD
 # --------------
-cat("Compute loglikelihood of rough fit\n")
+cat("Compute loglikelihood of oracle\n")
 out = compute_ll(X,F,t(L))
-cat(sprintf("method type: %s\n 
-	poisson_ll :%0.12f\n 
+cat(sprintf("method type: %s\n
+	poisson_ll :%0.12f\n
 	multinom_ll:%0.12f\n",out$type, out$pois_ll,out$multinom_ll))
 
+cat("real GTEx data vs generated data\n")
+s1 = summary(as.vector(counts))
+cat(names(s1))
+cat("\n")
+cat(s1)
+cat("\n")
+s2 = summary(as.vector(X))
+cat(s2)
+cat("\n")
 
 
 # RUN ROUGH FIT
@@ -73,8 +107,8 @@ A = t(fit$H)
 W = t(fit$W)
 
 out = compute_ll(X,A,W)
-cat(sprintf("method type: %s\n 
-	poisson_ll :%0.12f\n 
+cat(sprintf("method type: %s\n
+	poisson_ll :%0.12f\n
 	multinom_ll:%0.12f\n",out$type, out$pois_ll,out$multinom_ll))
 
 # WRITE NNMF RESULTS TO FILE
