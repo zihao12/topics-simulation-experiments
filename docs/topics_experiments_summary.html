@@ -11869,7 +11869,7 @@ skdnmf  34695   -5539070585721.606      -Inf                    -8.588246</code>
 $$ X \approx Q B$$
 where $X \in R^{m,n}$ is data, $Q \in R^{m, k}$ is orthonormal, $B \in R^{k,n}$.</p>
 <p>Then $$|X - W H|_F \approx |QB - WH|_F = |QB - Q\hat{W}H|_F = |B - \hat{W}H|_F$$
-where $W = Q\hat{W}$.</p>
+where $W = Q\hat{W}$ (Note the constraint is  $Q\hat{W} \geq 0 , H \geq 0$ ).</p>
 <p>Then we only need to solve the small problem (data becomes <code>k,n</code> in dimension), the project $\hat{W}$ back to $W$. The small problem is solved using HALS (Hierarchical Alternating Least Square).</p>
 <p>(Software: <a href="https://github.com/erichson/ristretto">https://github.com/erichson/ristretto</a>)</p>
 
@@ -11899,8 +11899,15 @@ nnmf    9e-07           7409    200     22744071.4794   -5583603643351  -218.906
 <pre><code>txt
 method  (rel)tol        time   n_iter  mse             multinom        poisson(add eps)
 rnmf    1e-04            106   323     1178.5           -5535304227626  -2.161012
-nnmf    0.02            7494    200    176312.8         -5541676793230  -12.78057</code></pre>
-<p>(<code>nnmf</code> in the second case is probably not initialized properly)</p>
+nnmf    0.02            7494    200    176312.8         -5541676793230  -12.78057  
+nnmf    0.0002          8527    200    1083.3           -5535299788700  -2.153923</code></pre>
+<p>Note:</p>
+<ul>
+<li><p>in the <code>GTEx-simulation</code> case, first <code>nnmf</code> initializes randomly, while the second <code>nnmf</code> initializes using fit from <code>rnmf</code>;</p>
+</li>
+<li><p>also, <code>nnmf</code> initialized with <code>rnmf</code> has rel.error in the scale of <code>1e-04</code> (from the 2nd iteration to the last (200) iteration), which is much higher than with <code>nnmf</code> in <code>GTEx</code> data (<code>94-07</code>)</p>
+</li>
+</ul>
 
 </div>
 </div>
@@ -11945,6 +11952,15 @@ nnmf    0.02            7494    200    176312.8         -5541676793230  -12.7805
 <li><p>From small generated data, we can see <code>rnmf</code> decreases generalized KL as it optimizes Frobenius norm when tolerance is high (say 1e-04). Maybe we can use it to initialize other algorithms?</p>
 </li>
 </ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Attempt to derive formula for GKL is here: <a href="https://www.overleaf.com/project/5bd084d90a33772e7a7f99a2">https://www.overleaf.com/project/5bd084d90a33772e7a7f99a2</a> (see GKL_quadratic.tex)</p>
 
 </div>
 </div>

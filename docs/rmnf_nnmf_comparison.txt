@@ -1,0 +1,16 @@
+##
+I compare rnmf with nnmf on GTEx and GTEx_simulated data. I use `frobenius norm` as objective function (min |A - W*H|_F, s.t A >=0, W >=0)
+
+## On GTEx dataset
+method	(rel)tol	 time	n_iter	mse		multinom	poisson
+rnmf	1e-04	  	115	724	22756690.7955	-5583491994252	-inf
+nnmf	9e-07	  	7409  200	22744071.4794	-5583603643351	-inf
+
+
+
+## On GTEx simulation dataset
+method  (rel)tol      	time   n_iter  mse             multinom        poisson
+rnmf    1e-04    	 106   323     1178.5   	-5535304227626  -inf
+nnmf    0.02     	7494  	200    176312.8   	-5541676793230  -inf	(note: rel.tol gets larger in the later stage)	
+
+(probably nnmf isn't initialized well in the second case)
