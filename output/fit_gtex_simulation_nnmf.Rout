@@ -212,7 +212,7 @@ Fitting Poisson topic model using nnmf.
 Warning message:
 In system.time(out <- .Call("NNLM_nnmf", A, as.integer(k), init.mask$Wi,  :
   Target tolerance not reached. Try a larger max.iter.
-Computation took 15581.31 seconds.
+Computation took 15412.57 seconds.
 Compute loglikelihood of rough fit
 method type: poisson
  
@@ -248,4 +248,4 @@ loaded via a namespace (and not attached):
  [9] pkgconfig_2.0.2  rlang_0.3.1.9000
 > proc.time()
       user     system    elapsed 
-223198.819   1852.791  15946.135 
+222680.773   1792.278  15780.931 

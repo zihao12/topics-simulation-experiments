@@ -1,13 +1,19 @@
+Loading GTEx data.
+Loaded 11688 x 55863 count matrix.
 Loading model.
 Loaded 55863 x 20 factors matrix, and 11688 x 20 loadings matrix.
 Generate data from Oracle
 Generated 55863 x 11688 transpose count matrix
-Compute loglikelihood of rough fit
+Compute loglikelihood of oracle
 method type: poisson
- 
+
 	poisson_ll :-2.108910154212
- 
+
 	multinom_ll:-5535274871489.795898437500
+real GTEx data vs generated data
+Min. 1st Qu. Median Mean 3rd Qu. Max.
+0 0 1 1079.961 102 27195665
+0 0 1 1079.963 133 25533411
 Run initial fit
 
  Iteration |        MSE |        MKL |     Target |  Rel. Err.
@@ -28,12 +34,12 @@ Run initial fit
 Warning message:
 In system.time(out <- .Call("NNLM_nnmf", A, as.integer(k), init.mask$Wi,  :
   Target tolerance not reached. Try a larger max.iter.
-Computation took 845.07 seconds.
+Computation took 865.56 seconds.
 Compute loglikelihood of rough fit
 method type: poisson
- 
+
 	poisson_ll :-Inf
- 
+
 	multinom_ll:-5546338653668.699218750000
 Writing results to file.
 Session info:
@@ -64,4 +70,4 @@ loaded via a namespace (and not attached):
  [9] pkgconfig_2.0.2  rlang_0.3.1.9000
 > proc.time()
      user    system   elapsed 
-11273.294   247.430  1315.618 
+11721.112   285.055  1667.278 

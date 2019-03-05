@@ -7,7 +7,7 @@ Fitting multinomial topic model using maptpx.
 Estimating on a 11688 samples collection.
 Fitting the 20 clusters/topics model.
 log posterior increase: 315351777291.072, 947537297.7783, 288390226.6348, 397259417.0186, 360893925.7832, 134892900.458, 74299769.3857, 44155587.9775, 31646824.5312, 23660952.6748, 17743909.1836, 13878300.376, 10759670.1631, 8164246.1045, 6579074.0352, 5647785.4414, 5029309.293, 4730852.9834, 4671934.0381, 4556402.8994, done. (L = -5535567318980.14)
-Computation took 46273.43 seconds.
+Computation took 46801.28 seconds.
 Compute loglikelihood of rough fit
 method type: multinom
  
@@ -44,4 +44,4 @@ loaded via a namespace (and not attached):
 [13] rlang_0.3.1.9000 
 > proc.time()
      user    system   elapsed 
-44511.372  2573.271 47106.922 
+44499.710  3111.066 47641.890 
