@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#SBATCH --partition=mstephens
+#SBATCH --mem=128G
+#SBATCH --time=36:00:00
+
+# For reproducibility, I add version numbers to the "module load" calls.
+module load gcc/6.3.0
+module load matlab/2018b
+
+# Run the MATLAB script.
+echo "Running refit_gtex_ccd.m"
+matlab -nodisplay -nosplash -nodesktop \
+  -r "run('refit_gtex_simulation_ccd.m'); exit;" \
+  > ../output/refit_gtex_simulation_ccd.out

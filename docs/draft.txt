@@ -1,0 +1,15 @@
+
+
+
+GTEx
+method		time/iter	tol	n_iter	max_iter	square error
+rsvdnmf		5		1e-10	1000	1000		22803200.773204613
+rnmf		0.05		1e-8	8275	10000		22746566.469717145
+nmf		5		1e-10	1000	1000		22739917.946948305
+
+
+
+GTEx-simulation
+method		time/iter	tol	n_iter	max_iter	square error
+rsvdnmf		5		1e-10	1000	1000		1041.3874791900662
+rnmf		0.05		1e-8	10000	10000		1015.6212375593
