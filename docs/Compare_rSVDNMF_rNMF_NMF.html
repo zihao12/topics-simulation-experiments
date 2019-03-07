@@ -11776,19 +11776,30 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Goal:">Goal:<a class="anchor-link" href="#Goal:">&#182;</a></h2><p>Compare rSVD+ NMF VS rNMF</p>
-<h3 id="Code:">Code:<a class="anchor-link" href="#Code:">&#182;</a></h3><p>I use the code (adpated a little bit) in <a href="https://github.com/erichson/ristretto/tree/master/ristretto">https://github.com/erichson/ristretto/tree/master/ristretto</a></p>
-<p>rsvd + nmf: <code>compute_rsvd</code> + <code>compute_nmf</code></p>
-<p>rnmf: <code>compute_rnmf</code></p>
-<p>nmf: <code>compute_nmf</code></p>
+<h3 id="Code:">Code:<a class="anchor-link" href="#Code:">&#182;</a></h3><p>I use the code (adpated a little bit) in <a href="https://github.com/erichson/ristretto/tree/master/ristretto">https://github.com/erichson/ristretto/tree/master/ristretto</a>
+Below is the function I used for each method</p>
+<ul>
+<li>rsvdnmf: <code>compute_rsvd</code>(which uses <code>compute_rqb</code>) + <code>compute_nmf</code></li>
+<li>rnmf: <code>compute_rnmf</code>(which uses <code>compute_rqb</code>)</li>
+<li>nmf: <code>compute_nmf</code></li>
+</ul>
 <p>Note:</p>
 <ul>
 <li><p>all <code>nmf</code> algoithms use HALS;</p>
 </li>
 <li><p>both <code>rsvd</code> and <code>rnmf</code> uses subroutine <code>compute_rqb</code> to get $X \approx QB$. 
-<code>rsvd</code> then uses <code>linalg.svd</code> to solve SVD for <code>B</code>; <code>rnmf</code> then uses <code>HALS</code> to solve $|B - \tilde{W}H|, QW \geq 0 , H \geq 0$</p>
+<code>rsvd</code> then uses <code>linalg.svd</code> to solve SVD for <code>B</code>; <code>rnmf</code> then uses <code>HALS</code> to solve $|B - \tilde{W}H|, QW \geq 0 , H \geq 0$ (Note, it uses $W^T W$ in the update for $H$, not $\hat{W}^T \hat{W}$)</p>
 </li>
 </ul>
 
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Small-scale-experiment">Small scale experiment<a class="anchor-link" href="#Small-scale-experiment">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11914,6 +11925,97 @@ mean least square ll: 95.69684489779198
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Comment:">Comment:<a class="anchor-link" href="#Comment:">&#182;</a></h3><p>From this one simulation experiment (not reliable as <code>tol</code> may mean different things, and <code>tol</code> is probably not reached), rsvdnmf &gt; nmf &gt; rnmf</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Large-scale-experiments">Large scale experiments<a class="anchor-link" href="#Large-scale-experiments">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="GTEx-data-(n-=-11688,-p-=-55863)">GTEx data (n = 11688, p = 55863)<a class="anchor-link" href="#GTEx-data-(n-=-11688,-p-=-55863)">&#182;</a></h2>
+<pre><code>txt
+method          time/iter       tol     n_iter  max_iter        square error
+rsvdnmf         5               1e-10   1000    1000            22803200.773204613
+rnmf            0.05            1e-8    8275    10000           22746566.469717145
+nmf             5               1e-10   1000    1000            22739917.946948305</code></pre>
+<p>Note:</p>
+<ul>
+<li>in <code>rsvdnmf</code>, number of negative elements (set to 0) after <code>rsvd</code> is <code>91863168</code> (<code>14%</code> of all counts)</li>
+</ul>
+<h2 id="GTEx-simualtion-data-(n-=-11688,-p-=-55863)">GTEx-simualtion data (n = 11688, p = 55863)<a class="anchor-link" href="#GTEx-simualtion-data-(n-=-11688,-p-=-55863)">&#182;</a></h2>
+<pre><code>txt
+method          time/iter       tol     n_iter  max_iter        square error
+rsvdnmf         5               1e-10   1000    1000            1041.3874791900662
+rnmf            0.05            1e-8    10000   10000           1015.6212375593987
+nmf             5               1e-10   1000    1000            1041.37283080514</code></pre>
+<p>Note:</p>
+<ul>
+<li>in <code>rsvdnmf</code>, number of negative elements (set to 0) after <code>rsvd</code> is <code>32789064</code> (<code>5%</code> of all counts)</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Computation-detail">Computation detail<a class="anchor-link" href="#Computation-detail">&#182;</a></h3><h4 id="Code:">Code:<a class="anchor-link" href="#Code:">&#182;</a></h4><ul>
+<li><p>rsvdnmf</p>
+<div class="highlight"><pre><span></span><span class="n">U</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">Vt</span> <span class="o">=</span> <span class="n">compute_rsvd</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">K</span><span class="o">+</span><span class="mi">20</span><span class="p">,</span> <span class="n">oversample</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">n_subspace</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_blocks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1234</span><span class="p">)</span>
+<span class="n">Xhat</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">s</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Vt</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;number of 0s in rsvd:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">Xhat</span><span class="p">[</span><span class="n">Xhat</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">Xhat</span><span class="p">[</span><span class="n">Xhat</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">A</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">compute_nmf</span><span class="p">(</span><span class="n">Xhat</span><span class="p">,</span><span class="n">rank</span><span class="o">=</span><span class="n">K</span><span class="p">,</span><span class="n">init</span> <span class="o">=</span> <span class="s1">&#39;nndsvd&#39;</span><span class="p">,</span><span class="n">random_state</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span> <span class="n">MAX_ITER</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</li>
+<li><p>rnmf</p>
+<div class="highlight"><pre><span></span><span class="n">A</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">compute_rnmf</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">rank</span><span class="o">=</span><span class="n">K</span><span class="p">,</span><span class="n">oversample</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">init</span> <span class="o">=</span> <span class="s1">&#39;nndsvd&#39;</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-08</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span> <span class="n">MAX_ITER</span><span class="p">)</span>
+</pre></div>
+</li>
+<li><p>nmf</p>
+<div class="highlight"><pre><span></span><span class="n">A</span><span class="p">,</span><span class="n">W</span> <span class="o">=</span> <span class="n">compute_nmf</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">rank</span><span class="o">=</span><span class="n">K</span><span class="p">,</span><span class="n">init</span> <span class="o">=</span> <span class="s1">&#39;nndsvd&#39;</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span> <span class="n">MAX_ITER</span><span class="p">)</span>
+</pre></div>
+</li>
+</ul>
+<h4 id="Resource">Resource<a class="anchor-link" href="#Resource">&#182;</a></h4><div class="highlight"><pre><span></span>#SBATCH --partition=broadwl
+#SBATCH --exclusive
+#SBATCH --time=36:00:00
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Comment:">Comment:<a class="anchor-link" href="#Comment:">&#182;</a></h2><ul>
+<li><p>The result above is not particularly useful as <code>tol</code> is not reached for most methods, so probably some methods can do better given more iterations. (need to record the loss during computation)</p>
+</li>
+<li><p>One reason that <code>rsvdnmf</code> does not do well may be because <code>rsvd</code> reserves lots of information in its negative elements, which are lost by setting to 0.</p>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="To-do">To do<a class="anchor-link" href="#To-do">&#182;</a></h2><ul>
+<li>Record loss during computation and plot loss curve. </li>
+</ul>
 
 </div>
 </div>
