@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>topics_experiments_summary</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>summary_spring2019_w1</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,117 +11775,23 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Topic-modeling-on-GTEx-data-(objective:-generalized-KL)">Topic modeling on GTEx data (objective: generalized KL)<a class="anchor-link" href="#Topic-modeling-on-GTEx-data-(objective:-generalized-KL)">&#182;</a></h2><h3 id="Data">Data<a class="anchor-link" href="#Data">&#182;</a></h3><p>GTEx data is prepared using <a href="https://github.com/stephenslab/topics/blob/master/analysis/prepare_gtex.Rmd">https://github.com/stephenslab/topics/blob/master/analysis/prepare_gtex.Rmd</a>
-The size is <code>n=11688; p=55863</code>.</p>
-<h3 id="Results:">Results:<a class="anchor-link" href="#Results:">&#182;</a></h3>
-<pre><code>txt
-## K = 30
-model   time/s multinomll             poissonll (per count)         poissonll (add eps)
-skd.nmf 90950   -5507149657753.165      -Inf
-nnmf    21426   -5505629590840.375      -82.00236
-betanmf 5810    -5505838194582.725      -82.32185
-ccd     62175   -5505895039558.204      -82.41003
-flashier 8973 (prior: pn pn)
-flashier 6040  (prior: nn pn)
-flashier 12580 (prior: pn nn)
+<p>Pick up from what I left last quarter, some summary...</p>
 
-## K = 20:
-model   time/s multinomll             poissonll (per count)         poissonll (add eps)
-skd.nmf 96137   -5529924942649.528      -Inf                            -119.5197
-nnmf    15406   -5527555982054.788      -115.5841
-betanmf 4429    -5527308834557.994      -115.2055
-ccd     43338   -5526679093542.194      -114.2419
-maptpx  44775   -5527136017322.085      -114.9409
-skd.lda 28504   -5538743477750.327      -132.7184       (perplexity = 1)
-rsvd    28</code></pre>
-<h3 id="Computation:">Computation:<a class="anchor-link" href="#Computation:">&#182;</a></h3><p>See <a href="https://github.com/stephenslab/topics/tree/zihao/scripts">https://github.com/stephenslab/topics/tree/zihao/scripts</a></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Apply-to-GTEx-dataset-directly">Apply to <code>GTEx</code> dataset directly<a class="anchor-link" href="#Apply-to-GTEx-dataset-directly">&#182;</a></h2><p>Result: <code>betanmf</code> (just multiplicative update while replacing 0 with small number in iteration) is "fastest" (not rigorous) while <code>ccd</code> has highest poisson likelihood.</p>
+<p>Todo and question:</p>
 <ul>
-<li><code>K = 30</code>:<code>fit_gtex_{nnmf,maptpx,ccd,betanmf,skdnmf,skdlda,rsvd}_K30.sbatch</code></li>
-<li><code>K = 20</code>: <code>fit_gtex_{nnmf,maptpx,ccd,betanmf,skdnmf,skdlda,rsvd}.sbatch</code></li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Topic-Modeling-on-GTEx-simulated-data-(objective:-generalized-KL)">Topic Modeling on GTEx-simulated data (objective: generalized KL)<a class="anchor-link" href="#Topic-Modeling-on-GTEx-simulated-data-(objective:-generalized-KL)">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Generate-data">Generate data<a class="anchor-link" href="#Generate-data">&#182;</a></h3><p>I fit <code>NNLM::nnmf</code> on GTEx data (K = 20) and use the fitted factor and loading to generate new data, using the function below:</p>
-
-<pre><code>{r}
-## Input
-## A: factor [p,k]
-## W: loading [k,n]
-## Output
-## X: simulated data [p,n]
-generateForacle &lt;- function(A,W, seed = 0){
-    set.seed(seed)
-    Lam = A %*% W
-    p = nrow(Lam)
-    n = ncol(Lam)
-    X = matrix(rpois(n*p,Lam), nrow = p)
-    return(X)
-}</code></pre>
-<p>See for details in
-<a href="https://github.com/zihao12/topics-simulation-experiments/script/generate_gtex_nnlm.R">https://github.com/zihao12/topics-simulation-experiments/script/generate_gtex_nnlm.R</a></p>
-<h3 id="Results:">Results:<a class="anchor-link" href="#Results:">&#182;</a></h3>
-<pre><code>txt
-model   time/s multinomll             poissonll (per count)         poissonll (add eps)
-oracle          -5535274871489.7959     -2.108910154212
-maptpx  46273   -5535547915113.8789     -2.527085324929
-nnmf    15581   -5535274339301.6719     -2.108086114508
-ccd     45358   -5.535653e+12           -Inf                    -2.689571
-betanmf 5364    -5.535566e+12           -2.554909
-skdnmf  34695   -5539070585721.606      -Inf                    -8.588246</code></pre>
-<p>See details in 
-<a href="https://github.com/zihao12/topics-simulation-experiments/script">https://github.com/zihao12/topics-simulation-experiments/script</a>, the batch files are:
-<code>fit_gtex_simulation_{nnmf,maptpx,ccd,betanmf,skdnmf,skdlda}.sbatch</code></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Topic-Modeling-on-GTEx/GTEx-simulated-data-(objective:-Frobenius-norm)">Topic Modeling on GTEx/GTEx-simulated data (objective: Frobenius norm)<a class="anchor-link" href="#Topic-Modeling-on-GTEx/GTEx-simulated-data-(objective:-Frobenius-norm)">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="paper-and-main-idea">paper and main idea<a class="anchor-link" href="#paper-and-main-idea">&#182;</a></h3><p>I found an interesting method called <code>randomized nmf</code> that solves <code>NMF</code> with Frobenius norm as objective function (<a href="https://arxiv.org/abs/1711.02037">https://arxiv.org/abs/1711.02037</a>). It shares similar idea with <code>rsvd</code>, projecting original data to a smaller subspace: 
-$$ X \approx Q B$$
-where $X \in R^{m,n}$ is data, $Q \in R^{m, k}$ is orthonormal, $B \in R^{k,n}$.</p>
-<p>Then $$|X - W H|_F \approx |QB - WH|_F = |QB - Q\hat{W}H|_F = |B - \hat{W}H|_F$$
-where $W = Q\hat{W}$ (Note the constraint is  $Q\hat{W} \geq 0 , H \geq 0$ ).</p>
-<p>Then we only need to solve the small problem (data becomes <code>k,n</code> in dimension), the project $\hat{W}$ back to $W$. The small problem is solved using HALS (Hierarchical Alternating Least Square).</p>
-<p>(Software: <a href="https://github.com/erichson/ristretto">https://github.com/erichson/ristretto</a>)</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Experiments:">Experiments:<a class="anchor-link" href="#Experiments:">&#182;</a></h3><h4 id="Small-scale-experiment:">Small scale experiment:<a class="anchor-link" href="#Small-scale-experiment:">&#182;</a></h4><ul>
-<li><p>I compare <code>rnmf</code> with a few other <code>nmf</code> methods without using the matrix sketching trick. <code>rnmf</code> is much faster.
-<a href="https://zihao12.github.io/topics-simulation-experiments/Investigate_rnmf_least_square.html">https://zihao12.github.io/topics-simulation-experiments/Investigate_rnmf_least_square.html</a></p>
+<li><p>run <code>betanmf</code> longer to see if it can do even better</p>
 </li>
-<li><p>I investigate the relationship between poisson loglikelihood and least square loss for <code>rnmf</code>. Results suggest that we can increase poisson loglikelihood to a high value by minimizing least square loss using <code>rnmf</code>. 
-<a href="https://zihao12.github.io/topics-simulation-experiments/Investigate_rnmf_poisson.html">https://zihao12.github.io/topics-simulation-experiments/Investigate_rnmf_poisson.html</a></p>
+<li><p>more systematically, compute loss during computation and see convergence behavior. Start with <code>betanmf</code> and <code>ccd</code></p>
+</li>
+<li><p>Read about analysis of their convergence analysis</p>
 </li>
 </ul>
 
@@ -11896,24 +11802,13 @@ where $W = Q\hat{W}$ (Note the constraint is  $Q\hat{W} \geq 0 , H \geq 0$ ).</p
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="GTEx-and-GTEx-simulated-data-(call-it-rnmf),-and-compare-it-with-nnmf.">GTEx and GTEx-simulated data (call it <code>rnmf</code>), and compare it with <code>nnmf</code>.<a class="anchor-link" href="#GTEx-and-GTEx-simulated-data-(call-it-rnmf),-and-compare-it-with-nnmf.">&#182;</a></h4><h5 id="GTEx-data">GTEx data<a class="anchor-link" href="#GTEx-data">&#182;</a></h5>
-<pre><code>txt
-method  (rel)tol       time   n_iter  mse             multinom        poisson(add eps)
-rnmf    1e-04           115     724     22756690.7955   -5583491994252  -218.4602
-nnmf    9e-07           7409    200     22744071.4794   -5583603643351  -218.9064</code></pre>
-<h5 id="GTEx-simulated-data">GTEx-simulated data<a class="anchor-link" href="#GTEx-simulated-data">&#182;</a></h5>
-<pre><code>txt
-method  (rel)tol        time   n_iter  mse             multinom        poisson(add eps)
-rnmf    1e-04            106   323     1178.5           -5535304227626  -2.161012
-nnmf    0.02            7494    200    176312.8         -5541676793230  -12.78057  
-nnmf    0.0002          8527    200    1083.3           -5535299788700  -2.153923</code></pre>
-<p>Note:</p>
+<h2 id="Apply-to-GTEx-sim-dataset">Apply to GTEx-sim dataset<a class="anchor-link" href="#Apply-to-GTEx-sim-dataset">&#182;</a></h2><p>I generate simulated dataset from <code>L,F</code> of <code>GTEx</code> fitted by <code>nnmf</code>. 
+Result: <code>nnmf</code> beats the oracle while other methods are far from that. The champion on original dataset, ccd, doesn't do well at all!</p>
+<p>Todo and question:</p>
 <ul>
-<li><p>in the <code>GTEx-simulation</code> case, first <code>nnmf</code> initializes randomly, while the second <code>nnmf</code> initializes using fit from <code>rnmf</code>. The output are  <code>/output/fit_gtex_simulation_nnmf_F_old.Rout</code> and <code>/output/fit_gtex_simulation_nnmf_F.Rout</code> respectively;</p>
+<li><p>It is very strange that <code>nnmf</code> is the only one does well. Is is just coincidence? Maybe use the fit from say <code>maptpx</code> to see.</p>
 </li>
-<li><p>Eyeballing results from the two <code>nnmf</code> results, we can see randomly initialized <code>nnmf</code> cannot decrease rel tol monotonically while initialization with <code>rnmf</code> can help do that.</p>
-</li>
-<li><p>also, <code>nnmf</code> initialized with <code>rnmf</code> has rel.error in the scale of <code>1e-04</code> (from the 2nd iteration to the last (200) iteration), which is much higher than with <code>nnmf</code> in <code>GTEx</code> data (<code>94-07</code>). However, the comparison of relative tolerance here might not be appropriate because the loss for real <code>GTEx</code> is much much larger than simulated dataset ($reltol = \frac{|e_1 - e_2|}{e_1 + e_2} $)</p>
+<li><p>make more realistic simulation: using negative binomial. But there are some technical issue here.</p>
 </li>
 </ul>
 
@@ -11924,45 +11819,11 @@ nnmf    0.0002          8527    200    1083.3           -5535299788700  -2.15392
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Some-questions">Some questions<a class="anchor-link" href="#Some-questions">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="How-real-is-the-simulated-data?">How real is the simulated data?<a class="anchor-link" href="#How-real-is-the-simulated-data?">&#182;</a></h3><ul>
-<li><p>The mean poisson loglikelihood in GTEx and in GTEx-simulated data are very different, but the median of the poisson loglikelihood are close. I looked at the poisson loglikelihood more closely here :
-<a href="https://zihao12.github.io/topics-simulation-experiments/Investigate_poisson_ll_matrix.html">https://zihao12.github.io/topics-simulation-experiments/Investigate_poisson_ll_matrix.html</a></p>
-</li>
-<li><p>Similar things happen for least square loss. The worst fit (also the greatest count) contribute a lot to MSE
-<a href="https://zihao12.github.io/topics-simulation-experiments/Investigate_square_error.html">https://zihao12.github.io/topics-simulation-experiments/Investigate_square_error.html</a></p>
-</li>
-</ul>
-<p>It seems that bad fits are wide spread across all features and samples. Are the bad fits due to the model or optimization?</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Is-it-Coincidence-that-nnmf-fits-best-when-data-is-simulated-from-its-F,L">Is it Coincidence that <code>nnmf</code> fits best when data is simulated from its <code>F,L</code><a class="anchor-link" href="#Is-it-Coincidence-that-nnmf-fits-best-when-data-is-simulated-from-its-F,L">&#182;</a></h3><p>We can see that <code>nnmf</code> fit on GTEx-simulated data is the only one that beats oracle, while other methods are lagged behind. This advantage is not seen in real GTEx data. It is quite dubious since the data is generated from <code>F,L</code> from <code>nnmf</code> fit ...</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Can-we-use-rnmf-in-generalized-KL-objective?">Can we use <code>rnmf</code> in generalized KL objective?<a class="anchor-link" href="#Can-we-use-rnmf-in-generalized-KL-objective?">&#182;</a></h3><ul>
-<li><p><code>rnmf</code>  seems to be significantly faster than most NMF methods. Maybe we can adapt it to solve KL directly. But we may need $Q$ to be slightly different. Orthonormal $Q$ does not change the Frobenius norm, but will change generalized KL divergence. In order to reduce to small problem, we might want to the equation above to hold under generalized KL.</p>
-</li>
-<li><p>From small generated data, we can see <code>rnmf</code> decreases generalized KL as it optimizes Frobenius norm when tolerance is high (say 1e-04). Maybe we can use it to initialize other algorithms?</p>
-</li>
+<h2 id="Comparison-of-GTEx-and-GTEx-sim-results">Comparison of GTEx and GTEx-sim results<a class="anchor-link" href="#Comparison-of-GTEx-and-GTEx-sim-results">&#182;</a></h2><p>The median of poisson loglikelihood are close but the mean are very different. This happens when using Frobenius norm as objective function. Taking a look at the latter tells me that the worst fit (which happens to be the biggest count) contribute a lot to the loss!</p>
+<p>Todo and question:</p>
+<ul>
+<li>Is the poisson assumption still valid here? Do we need to remove some crazy outliers? (see plot in  <a href="https://zihao12.github.io/topics-simulation-experiments/Investigate_square_error.html">https://zihao12.github.io/topics-simulation-experiments/Investigate_square_error.html</a>)</li>
+<li>If we want to keep and capture that signal, do we need to use a penalized term (may even lead to better fit by bypassing the bad local minimum? just guessing: start from a more average factor, it might be hard to become a sparse one?)</li>
 </ul>
 
 </div>
@@ -11972,7 +11833,20 @@ nnmf    0.0002          8527    200    1083.3           -5535299788700  -2.15392
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Attempt to derive formula for GKL is here: <a href="https://www.overleaf.com/project/5bd084d90a33772e7a7f99a2">https://www.overleaf.com/project/5bd084d90a33772e7a7f99a2</a> (see GKL_quadratic.tex)</p>
+<h2 id="How-effective-is-&quot;sketching&quot;">How effective is "sketching"<a class="anchor-link" href="#How-effective-is-&quot;sketching&quot;">&#182;</a></h2><p>I experiment with <code>rsvd</code> which first projects high dimensional data into low dimension, apply nonegative matrix factorization in low dimensional space, then projects back. It is indeed very fast and accuracy isn't bad. It is designed for model with normal assumption. One direct way to apply to Poisson data is to use it in initialization.</p>
+<p>Todo and question:</p>
+<ul>
+<li>Can we use the sketching trick for Poisson data?</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Some-good-resources:">Some good resources:<a class="anchor-link" href="#Some-good-resources:">&#182;</a></h2><p><a href="https://www.cs.purdue.edu/homes/dgleich/conf/slides/mmm2012/dhillon.pdf">https://www.cs.purdue.edu/homes/dgleich/conf/slides/mmm2012/dhillon.pdf</a> good summary of NMF algorithms, particularly <code>ccd</code> and <code>gcd</code> (latter being "greedy coordinate descent")</p>
 
 </div>
 </div>
