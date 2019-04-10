@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>summary_spring2019_w1</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Investigate_lee</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,7 +11775,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Pick up from what I left last quarter, some summary... and I especially look at <code>ccd</code> and <code>betanmf</code></p>
+<h2 id="Goal">Goal<a class="anchor-link" href="#Goal">&#182;</a></h2><p>It is suprising that "maxdiff" of lee's multiplicative method implemented in matlab "betanmf" (for gneralized KL divergence) is huge (around $10^{20}$). So it is far from converging. Is is possible that it is just some crazy entry that is hard to fit, or ...?</p>
 
 </div>
 </div>
@@ -11784,35 +11784,14 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Update">Update<a class="anchor-link" href="#Update">&#182;</a></h1><h2 id="Fair-Comparison?">Fair Comparison?<a class="anchor-link" href="#Fair-Comparison?">&#182;</a></h2><p>After looking at the output file of <code>betanmf</code> and <code>ccd</code> carefully, I think the comparison is probbaly not the best one. The two methods (as well as all other NMF methods) optimize the biconvex problem by optimizing over $F$, $L$ alternatively. So it is a matter of a tradeoff between progress gained in one full update (all elements in both $F$ and $L$) and the expense of the full update.</p>
-<p>For progress within each update, we can just let all methods run same number of iterations, and record/visualize the changes in obejctive function.</p>
-<p>For computation expense, it is a bit complicated. For example, <code>mu</code> is much faster than the <code>ccd</code> in practice per iteration. This seems to contradict literature. Maybe because <code>mu</code> relies on matrix multiplication which matlab has very fast implementation, while <code>ccd</code> replies on loop over all coordinates and its C implememtation may not parallize (not sure).</p>
-<h2 id="Investigating-Lee's-multiplicate-update">Investigating Lee's multiplicate update<a class="anchor-link" href="#Investigating-Lee's-multiplicate-update">&#182;</a></h2><p>It seems that in practice, lee's update is not bad in matlab (adding small constant when encountering 0). But the "maxdiff" is huge in the output file, so I investigated its behavior in "GTEX-sim" dataset. The result is surprising!</p>
-<p>See <a href="https://zihao12.github.io/topics-simulation-experiments/Investigate_lee.html">https://zihao12.github.io/topics-simulation-experiments/Investigate_lee.html</a></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Summary">Summary<a class="anchor-link" href="#Summary">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Apply-to-GTEx-dataset-directly">Apply to <code>GTEx</code> dataset directly<a class="anchor-link" href="#Apply-to-GTEx-dataset-directly">&#182;</a></h2><p>Result: <code>betanmf</code> (just multiplicative update while replacing 0 with small number in iteration) is "fastest" (not rigorous) while <code>ccd</code> has highest poisson likelihood.</p>
-<p>Todo and question:</p>
+<h2 id="Investigation">Investigation<a class="anchor-link" href="#Investigation">&#182;</a></h2><ul>
+<li>So I run the method on <code>GTEx-sim</code> from the beginning for 10 iterations from <code>nnlm</code> (initialized using rough fit), and record the largest 100 entries of $|\Delta A|,|\Delta B|$ during iteration (in this case $F = A$, $L = B'$; note that $A$ is updated before $B$) for betanmf. </li>
+</ul>
+<p>The result is surprisng: after the second iteration $|\Delta A| \approx 0,|\Delta B| \approx 10^{21}$ !</p>
 <ul>
-<li><p>run <code>betanmf</code> longer to see if it can do even better</p>
+<li><p>Then I wonder if this behavior happens to betanmf for Frobenius norm. So I implement it (very easily) and do the same thing. Then result is $|\Delta A| &lt; 1,|\Delta B| &gt; 10^{3}$</p>
 </li>
-<li><p>more systematically, compute loss during computation and see convergence behavior. Start with <code>betanmf</code> and <code>ccd</code></p>
-</li>
-<li><p>Read about analysis of their convergence analysis</p>
+<li><p>The big difference between changes in $A,B$ is not observed when applying to very simple and small dataset (of the same scale).</p>
 </li>
 </ul>
 
@@ -11823,55 +11802,263 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Apply-to-GTEx-sim-dataset">Apply to GTEx-sim dataset<a class="anchor-link" href="#Apply-to-GTEx-sim-dataset">&#182;</a></h2><p>I generate simulated dataset from <code>L,F</code> of <code>GTEx</code> fitted by <code>nnmf</code>. 
-Result: <code>nnmf</code> beats the oracle while other methods are far from that. The champion on original dataset, ccd, doesn't do well at all!</p>
-<p>Todo and question:</p>
-<ul>
-<li><p>It is very strange that <code>nnmf</code> is the only one does well. Is is just coincidence? Maybe use the fit from say <code>maptpx</code> to see.</p>
-</li>
-<li><p>make more realistic simulation: using negative binomial. But there are some technical issue here.</p>
-</li>
-</ul>
+<h2 id="Possible-reason">Possible reason<a class="anchor-link" href="#Possible-reason">&#182;</a></h2><p>Initialization?</p>
+<h2 id="Further-investigation">Further investigation<a class="anchor-link" href="#Further-investigation">&#182;</a></h2><p>Is it possible that those changes happen only in a few samples/features?</p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Comparison-of-GTEx-and-GTEx-sim-results">Comparison of GTEx and GTEx-sim results<a class="anchor-link" href="#Comparison-of-GTEx-and-GTEx-sim-results">&#182;</a></h2><p>The median of poisson loglikelihood are close but the mean are very different. This happens when using Frobenius norm as objective function. Taking a look at the latter tells me that the worst fit (which happens to be the biggest count) contribute a lot to the loss!</p>
-<p>Todo and question:</p>
-<ul>
-<li>Is the poisson assumption still valid here? Do we need to remove some crazy outliers? (see plot in  <a href="https://zihao12.github.io/topics-simulation-experiments/Investigate_square_error.html">https://zihao12.github.io/topics-simulation-experiments/Investigate_square_error.html</a>)</li>
-<li>If we want to keep and capture that signal, do we need to use a penalized term (may even lead to better fit by bypassing the bad local minimum? just guessing: start from a more average factor, it might be hard to become a sparse one?)</li>
-</ul>
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span>dF <span class="o">=</span> read.csv<span class="p">(</span><span class="s">&quot;../../topics-simulation-bigdata/output/gtex_simulation_fdiff_betanmf.csv&quot;</span><span class="p">,</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+dL <span class="o">=</span> read.csv<span class="p">(</span><span class="s">&quot;../../topics-simulation-bigdata/output/gtex_simulation_ldiff_betanmf.csv&quot;</span><span class="p">,</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+</pre></div>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="How-effective-is-&quot;sketching&quot;">How effective is "sketching"<a class="anchor-link" href="#How-effective-is-&quot;sketching&quot;">&#182;</a></h2><p>I experiment with <code>rsvd</code> which first projects high dimensional data into low dimension, apply nonegative matrix factorization in low dimensional space, then projects back. It is indeed very fast and accuracy isn't bad. It is designed for model with normal assumption. One direct way to apply to Poisson data is to use it in initialization.</p>
-<p>Todo and question:</p>
-<ul>
-<li>Can we use the sketching trick for Poisson data? (well, in <a href="https://link.springer.com/article/10.1007/s10994-008-5054-x">https://link.springer.com/article/10.1007/s10994-008-5054-x</a> the answer is probably no for Poisson model)</li>
-</ul>
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="kp">print</span><span class="p">(</span><span class="s">&quot;the changes of the 100th largest in Factor in poisson model&quot;</span><span class="p">)</span>
+dF<span class="p">[,</span><span class="m">100</span><span class="p">]</span>
+</pre></div>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &#34;the changes of the 100th largest in Factor in poisson model&#34;
+</pre>
 </div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>1.5524e+20</li>
+	<li>2.8322e+19</li>
+	<li>2.0935e+19</li>
+	<li>1.5757e+19</li>
+	<li>1.1348e+19</li>
+	<li>9.1657e+18</li>
+	<li>7.79e+18</li>
+	<li>6.2488e+18</li>
+	<li>4.9545e+18</li>
+	<li>3.9844e+18</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Some-good-resources:">Some good resources:<a class="anchor-link" href="#Some-good-resources:">&#182;</a></h2><p><a href="https://www.cs.purdue.edu/homes/dgleich/conf/slides/mmm2012/dhillon.pdf">https://www.cs.purdue.edu/homes/dgleich/conf/slides/mmm2012/dhillon.pdf</a> good summary of NMF algorithms, particularly <code>ccd</code> and <code>gcd</code> (latter being "greedy coordinate descent")</p>
-<p><a href="https://arxiv.org/pdf/1401.5226.pdf">https://arxiv.org/pdf/1401.5226.pdf</a> why and how of NMF</p>
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="kp">print</span><span class="p">(</span><span class="s">&quot;the changes of the largest in Loading in poisson model&quot;</span><span class="p">)</span>
+dL<span class="p">[,</span><span class="m">1</span><span class="p">]</span>
+</pre></div>
 
 </div>
 </div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &#34;the changes of the largest in Loading in poisson model&#34;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>732930</li>
+	<li>8.1602e-15</li>
+	<li>1.0299e-14</li>
+	<li>1.1143e-14</li>
+	<li>1.0816e-14</li>
+	<li>1.0004e-14</li>
+	<li>9.0732e-15</li>
+	<li>8.2309e-15</li>
+	<li>7.5283e-15</li>
+	<li>6.955e-15</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span>dF_F <span class="o">=</span> read.csv<span class="p">(</span><span class="s">&quot;../../topics-simulation-bigdata/output/gtex_simulation_fdiff_betanmf_F.csv&quot;</span><span class="p">,</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+dL_F <span class="o">=</span> read.csv<span class="p">(</span><span class="s">&quot;../../topics-simulation-bigdata/output/gtex_simulation_ldiff_betanmf_F.csv&quot;</span><span class="p">,</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="kp">print</span><span class="p">(</span><span class="s">&quot;the changes of the largest in Factor in normal model&quot;</span><span class="p">)</span>
+dF_F<span class="p">[,</span><span class="m">1</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &#34;the changes of the largest in Factor in normal model&#34;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>38.931</li>
+	<li>13.757</li>
+	<li>4.315</li>
+	<li>1.0736</li>
+	<li>0.40841</li>
+	<li>0.38128</li>
+	<li>0.35791</li>
+	<li>0.33802</li>
+	<li>0.32084</li>
+	<li>0.30548</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="kp">print</span><span class="p">(</span><span class="s">&quot;the changes of the 100th largest in Factor in normal model&quot;</span><span class="p">)</span>
+dL_F<span class="p">[,</span><span class="m">100</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &#34;the changes of the 100th largest in Factor in normal model&#34;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>130190</li>
+	<li>85552</li>
+	<li>16201</li>
+	<li>5459.4</li>
+	<li>4300.5</li>
+	<li>3953.6</li>
+	<li>3433.8</li>
+	<li>3104.1</li>
+	<li>2774.3</li>
+	<li>2490.5</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
     </div>
   </div>
