@@ -1,0 +1,42 @@
+The Why and How of Nonnegative Matrix Factorization
+
+* Framework of Block Coordinate Descent
+Each update solves a NNLS (Nonnegative ?? Least Square problem) 
+
+** mu (lee's multiplicate update): 
+	* “majorization-minimization”; the update for F norm can be intrepreted as gradient descent
+	* scale well; 
+	* objvective function nonincreasing, but converge slowly 
+
+** als (alternating least square):
+	*  does not solve with nonnegative constraint
+	* very cheap
+	* not guaranteed to converge to statiionary point
+
+** anls: (nonnegative alternating least square)
+	* solve NNLS problem exactly; 
+	* many subroutines; 
+	* guaranteed to converge to stationary point; 
+	* expensive iteration 
+	* hard to code
+
+** hals: (hierarchical alternating least square)
+	* one way to solve NNLS exactly
+	*update one column each time (probably more complicated than that); 
+	*faster convergence
+
+( a few other methods we encountered:
+** ccd: 
+	* build on fasthals
+	* perform a variable selection step so that bigger entries are updated more 
+	(however in the code we are using, it doesn’t do variable selection)
+
+
+** NNMF:  
+	* solve NNLS using Sequential Cooridinate Descent
+	* column-wise
+)
+
+* (near-) separable matrix
+
+* compare stopping criterion by the first order optimality condition
