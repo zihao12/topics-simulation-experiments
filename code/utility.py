@@ -10,10 +10,12 @@ def compute_loglik(X,A,W):
 		multinom_ll = (X * np.log(theta + e)).sum()
 		lam = theta.dot(np.diag(X.sum(axis = 0)))	
 		poisson_ll = poisson.logpmf(X,lam).sum()/(n*p)	
+		poisson_ll_eps = poisson.logpmf(X,lam + e).sum()/(n*p)	
 	else:
 		method = "poisson"
 		lam = A.dot(W)
 		poisson_ll = poisson.logpmf(X,lam).sum()/(n*p)
+		poisson_ll_eps = poisson.logpmf(X,lam + e).sum()/(n*p)
 
 		ca = A.sum(axis = 0)
 		Ahat = A.dot(np.diag(ca**-1))
@@ -23,7 +25,7 @@ def compute_loglik(X,A,W):
 		theta = Ahat.dot(What)
 		multinom_ll = (X * np.log(theta + e)).sum()
 
-	return {"type":method, "poisson_ll":poisson_ll, "multinom_ll":multinom_ll}
+	return {"type":method, "poisson_ll":poisson_ll,"poisson_ll_eps":poisson_ll_eps, "multinom_ll":multinom_ll}
 
 
 def compute_least_sqr_loss(X,Lam):

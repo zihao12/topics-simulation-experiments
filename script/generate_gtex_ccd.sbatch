@@ -7,4 +7,5 @@
 # For reproducibility, I add version numbers to the "module load" calls.
 module load R/3.5.1
 
-export OPENBLAS_NUM_THREADS=1
+echo 'run generate_sim.R gtex data with ccd method' 
+Rscript generate_sim.R ccd gtex

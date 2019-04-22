@@ -1,0 +1,21 @@
+Loading GTEx simulation data.
+Loaded 100 x 300 count matrix.
+Loading estimates of factors and loadings.
+Loaded 300 x 10 factors matrix, and 100 x 10 loadings matrix.
+mse for each F,L pair:
+27102841
+26734126
+26338841
+25953766
+25689260
+25232992
+25182392
+24634143
+24376520
+22840702
+
+order is:
+ [1]  5  2 10  3  8  7  9  4  1  6
+> proc.time()
+   user  system elapsed 
+  0.373   0.059   0.921 

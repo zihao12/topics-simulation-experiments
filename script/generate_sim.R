@@ -4,7 +4,7 @@
 args = commandArgs(trailingOnly=TRUE)
 method = args[1]
 data = args[2]
-
+set.seed(12345)
 # SCRIPT SETTINGS
 # ---------------
 # These variables specify the names of the input files.
@@ -19,8 +19,8 @@ out.dir           <- file.path("../../topics-simulation-bigdata","output")
 simname 		<- paste0(data, "sim_", method)
 
 count.out.file  <- paste0(simname, ".csv")
-factors.out.file  <- paste0(simname, "_rough_factors.csv")
-loadings.out.file <- paste0(simname, "_rough_loadings.csv")
+factors.out.file  <- paste0(simname, "_factors_rough.csv")
+loadings.out.file <- paste0(simname, "_loadings_rough.csv")
 
 
 # SET UP ENVIRONMENT

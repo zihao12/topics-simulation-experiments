@@ -1,0 +1,5 @@
+NA.csv
+NA_factors_rough.csv
+Loading GTEx data.
+Error: '../../topics-simulation-bigdata/output/NA.csv' does not exist in current working directory ('/project/mstephens/zihao/topics-simulation-experiments/script').
+Execution halted

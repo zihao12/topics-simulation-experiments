@@ -90,14 +90,14 @@ legend('mu','admm','ccd','fpa')
 
 
 
-plot(log10(-f1(2:1000)));
+plot(log10(-f1(1:1000)));
 hold on;
-plot(log10(-f2(2:1000)));
+plot(log10(-f2(1:1000)));
 hold on;
-plot(log10(-f3(2:1000)));
+plot(log10(-f3(1:1000)));
 hold on;
-plot(log10(-f4(2:1000)));
-legend('mu','admm','ccd','fpa');
+plot(f4(1:1000)));
+legend('mu','admm','ccd','fpa')
 
 
 

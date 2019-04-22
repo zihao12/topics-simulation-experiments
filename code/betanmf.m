@@ -34,7 +34,7 @@ function [A, B, f] = betanmf (X, A, B, tol, maxiter, verbose)
     tol = 1e-6;
   end
   if nargin < 5
-    maxiter = 1000;
+    maxiter = 5000;
   end 
   if nargin < 6
     verbose = true;

@@ -22,7 +22,7 @@ function [W, H, f] = nmfadmm (V, W, H, r, tol, maxiter, verbose)
     tol = 1e-6;
   end
   if nargin < 6
-    maxiter = 1000;
+    maxiter = 5000;
   end
   if nargin < 7
     verbose = true;

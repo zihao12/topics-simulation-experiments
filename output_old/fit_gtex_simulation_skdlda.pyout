@@ -1,0 +1,30 @@
+p_tol: 0.0001
+e_tol: 1
+Loading GTEx data.
+data shape after transposing:
+(55863, 11688)
+start fitting
+iteration: 1 of max_iter: 100000
+iteration: 2 of max_iter: 100000
+iteration: 3 of max_iter: 100000
+iteration: 4 of max_iter: 100000
+iteration: 5 of max_iter: 100000
+iteration: 6 of max_iter: 100000
+iteration: 7 of max_iter: 100000
+iteration: 8 of max_iter: 100000
+iteration: 9 of max_iter: 100000
+iteration: 10 of max_iter: 100000, perplexity: 2616.4915
+iteration: 11 of max_iter: 100000
+iteration: 12 of max_iter: 100000
+iteration: 13 of max_iter: 100000
+iteration: 14 of max_iter: 100000
+iteration: 15 of max_iter: 100000
+iteration: 16 of max_iter: 100000
+iteration: 17 of max_iter: 100000
+iteration: 18 of max_iter: 100000
+iteration: 19 of max_iter: 100000
+iteration: 20 of max_iter: 100000, perplexity: 2595.4678
+iteration: 21 of max_iter: 100000
+iteration: 22 of max_iter: 100000
+iteration: 23 of max_iter: 100000
+iteration: 24 of max_iter: 100000

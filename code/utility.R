@@ -113,11 +113,66 @@ compute_mse <- function(X,A,W){
 }
 
 
+## compute proportion of reduction in MSE
+## for ith A,W
+## pve = 1 - |X - A(-i) * W(-i)|^2/|X|^2
+
+## input: X p,n; A p,k; W k,n
+
+## output:
+## out$x is the sorted pve in decreasing order
+## out$ix is the index in decreasing order
+compute_pve <- function(X,A,W){
+	pves = c()
+	p = nrow(X)
+	n = ncol(X)
+	k = ncol(A)
+	for(i in 1:k){
+		mse_fit = sum((X - outer(A[,i], W[i,], "*"))^2)
+		mse_total = sum(X^2)
+		pve = 1 - mse_fit/mse_total
+		pves = c(pves, pve)
+	}
+	return(sort(pves, index.return = T, decreasing = T))	
+}
 
 
-
-
-
+#compute_mse_rank1 <- function(X,A,W){
+#	k = ncol(A)
+#	p = nrow(X)
+#	n = ncol(X)
+#	mse = c()
+#	for(i in 1:k){
+#		mymse = sum((X - outer(A[,i], W[i,], "*"))^2)/(n*p)
+#		mse = c(mse, mymse)
+#	}		
+#	return(mse)
+#}
+#
+#compute_total_mse <- function(counts){
+#	n = nrow(counts)
+#	p = ncol(counts)
+#	return(sum((counts -  t(replicate(n, colMeans(counts))))^2)/(n*p))
+#}
+#
+#compute_pve1 <- function(counts, l,f){
+#	n = nrow(counts)
+#	mse0 = compute_total_mse(counts)
+#	resid = counts - outer(l,f, "*")
+#	mse_resid = compute_total_mse(resid)
+#	return((mse0 - mse_resid)/mse0)
+#}
+#
+#compute_pve <- function(counts,L,F){
+#	k = ncol(L)
+#	pves = c()
+#	for(i in 1:k){
+#		pve = compute_pve1(counts,L[,i],F[,i])
+#		pves = c(pves, pve)	
+#	}
+#	out = sort(pves, index.return = T, decreasing = T)
+#	return(out)	
+#}
 
 
 

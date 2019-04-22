@@ -1,0 +1,11 @@
+gtexsim_ccd.csv
+gtexsim_ccd_factors_rough.csv
+Loading GTEx data.
+Loaded 11688 x 55863 count matrix.
+Loading initial estimates of factors and loadings.
+Loaded 55863 x 20 factors matrix.
+Fitting multinomial topic model using maptpx.
+
+Estimating on a 11688 samples collection.
+Fitting the 20 clusters/topics model.
+log posterior increase: 324990656562.64, 1965630103.0908, 

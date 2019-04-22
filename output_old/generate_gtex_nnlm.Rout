@@ -1,0 +1,73 @@
+Loading GTEx data.
+Loaded 11688 x 55863 count matrix.
+Loading model.
+Loaded 55863 x 20 factors matrix, and 11688 x 20 loadings matrix.
+Generate data from Oracle
+Generated 55863 x 11688 transpose count matrix
+Compute loglikelihood of oracle
+method type: poisson
+
+	poisson_ll :-2.108910154212
+
+	multinom_ll:-5535274871489.795898437500
+real GTEx data vs generated data
+Min. 1st Qu. Median Mean 3rd Qu. Max.
+0 0 1 1079.961 102 27195665
+0 0 1 1079.963 133 25533411
+Run initial fit
+
+ Iteration |        MSE |        MKL |     Target |  Rel. Err.
+--------------------------------------------------------------
+         1 | 93775855.7203 |   300.5844 |   300.5844 |          2
+         2 | 32104102.4170 |   172.0088 |   172.0088 |        0.5
+         3 | 23374996.9248 |   108.5639 |   108.5639 |        0.5
+         4 | 19841867.2719 |    62.6695 |    62.6695 |        0.5
+         5 | 14470442.4007 |    35.2318 |    35.2318 |        0.6
+         6 | 12108390.4208 |    25.3365 |    25.3365 |        0.3
+         7 | 11718150.6704 |    22.1742 |    22.1742 |        0.1
+         8 | 11415016.6111 |    20.2557 |    20.2557 |       0.09
+         9 | 11076771.2964 |    18.9837 |    18.9837 |       0.06
+        10 | 9651693.6870 |    17.4105 |    17.4105 |       0.09
+--------------------------------------------------------------
+ Iteration |        MSE |        MKL |     Target |  Rel. Err.
+
+Warning message:
+In system.time(out <- .Call("NNLM_nnmf", A, as.integer(k), init.mask$Wi,  :
+  Target tolerance not reached. Try a larger max.iter.
+Computation took 865.56 seconds.
+Compute loglikelihood of rough fit
+method type: poisson
+
+	poisson_ll :-Inf
+
+	multinom_ll:-5546338653668.699218750000
+Writing results to file.
+Session info:
+R version 3.5.1 (2018-07-02)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Scientific Linux 7.4 (Nitrogen)
+
+Matrix products: default
+BLAS/LAPACK: /software/openblas-0.2.19-el7-x86_64/lib/libopenblas_haswellp-r0.2.19.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] NNLM_0.4.2  readr_1.3.1
+
+loaded via a namespace (and not attached):
+ [1] compiler_3.5.1   R6_2.3.0         hms_0.4.2        tools_3.5.1     
+ [5] pillar_1.3.1     tibble_2.0.1     Rcpp_1.0.0       crayon_1.3.4    
+ [9] pkgconfig_2.0.2  rlang_0.3.1.9000
+> proc.time()
+     user    system   elapsed 
+11721.112   285.055  1667.278 

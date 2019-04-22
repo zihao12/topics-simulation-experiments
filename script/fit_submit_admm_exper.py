@@ -4,19 +4,21 @@
 import os
 import sys
 
-method = sys.argv[1]
-data = sys.argv[2]
+data = sys.argv[1]
+r = int(sys.argv[2])
+method = "admm"
 
 path = "./"
 
-bshname = "fit_{}_{}.sbatch".format(data, method)
-echo = "run fit_{}.m on {} data".format(method, data)
+bshname = "fit_{}_{}_r{}.sbatch".format(data, method,r)
+echo = "run fit_{}.m on {} data with r {}".format(method, data, r)
 
-matcom1 = "dataname = '{}'".format(data)
-matcom2 = "run('fit_{}.m')".format(method)
-matcomm = ' "{};{}; exit;"'.format(matcom1, matcom2)
+matcom0 = "dataname = '{}'".format(data)
+matcom1 = "r = {}".format(r)
+matcom2 = "run('fit_{}_exper.m')".format(method)
+matcomm = ' "{};{};{}; exit;"'.format(matcom0,matcom1, matcom2)
 
-output = '../output/fit_{}_{}.out'.format(data, method)
+output = '../output/fit_{}_{}_r{}.out'.format(data, method, r)
 
 command = 'matlab -nodisplay -nosplash -nodesktop -r {} > {}'.format(matcomm, output)
 
