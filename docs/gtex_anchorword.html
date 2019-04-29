@@ -12034,6 +12034,78 @@ topic 20: 0 anchor words
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Comparing-with-information-from-GTEx-portal">Comparing with information from GTEx portal<a class="anchor-link" href="#Comparing-with-information-from-GTEx-portal">&#182;</a></h2><p>Our model is able to find some top genes that are expressed only in one or a few tissue. Yet some top genes have similar expression pattern.</p>
+<p>More detailed cmparison below:</p>
+<p>(from <a href="https://gtexportal.org/home/">https://gtexportal.org/home/</a> and <a href="https://github.com/stephenslab/topics/blob/zihao/docs/gtex_loadings_plot_ccd.pdf">https://github.com/stephenslab/topics/blob/zihao/docs/gtex_loadings_plot_ccd.pdf</a>)</p>
+<ul>
+<li><p>TOPIC 12: (proportion of top 10 genes: 0.834395386446502)</p>
+<ul>
+<li>dominant genes are "mitochondrially encoded" </li>
+<li>The expression of the most prominant gene are quite similar to the topic loading on that gene </li>
+</ul>
+</li>
+<li><p>TOPIC 18:</p>
+<ul>
+<li>top genes are almost only expressed in pancreas from GTEx portal, which is exactly what our loading shows for this topic</li>
+</ul>
+</li>
+<li><p>TOPIC 3,5,17,4,8</p>
+<ul>
+<li>the expression of top gene has very similar pattern, and also only seen in one tissue</li>
+</ul>
+</li>
+<li><p>TOPIC 13:</p>
+<ul>
+<li>the expression of the top gene is not very similar to the corresponding loadings, especially the expression in brain is much smaller in loading</li>
+</ul>
+</li>
+<li><p>TOPIC 15</p>
+<ul>
+<li>the expression of top gene is similar to loading in tissues except in cervix (high gene expression which is not observed in corresponding loading)</li>
+</ul>
+</li>
+<li><p>TOPIC 9:</p>
+<ul>
+<li>high expression of top 2 genes only found in stomach</li>
+<li>high expression of 5th,9th genes only found in salivary gland</li>
+<li>expression pattern of 3th, 4th,5th,8th,10th similar (highly expressed in a few and probably similar tissues)</li>
+<li>expression of 6th and 7th are simialr</li>
+</ul>
+</li>
+<li><p>TOPIC 20</p>
+<ul>
+<li>top 3 genes are highly expressed in Cells - Transformed fibroblasts (a label not shown in my loading plot)</li>
+<li>similar to topic 9, many genes are highly expressed in many tissues</li>
+</ul>
+</li>
+<li><p>TOPIC 19</p>
+<ul>
+<li>top 3 genes highly expressed in pituitary</li>
+<li>4th 5th highly expressed in adrenal gland</li>
+<li>many other genes highly expressed in many other tissues (also similar pattern to many other)</li>
+</ul>
+</li>
+<li><p>TOPIC 6</p>
+<ul>
+<li>Top 2 genes are highly expressed in skin</li>
+<li>many other genes highly expressed in many other tissues</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>The rest of the topics:<ul>
+<li>Some have sparse loading, but among the top genes, some express similar to the loading, while some others are highly expressed in many tussues</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
