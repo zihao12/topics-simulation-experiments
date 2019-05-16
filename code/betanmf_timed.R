@@ -118,6 +118,10 @@ update_B_timed <- function(X,A,B,E,e){
 betanmf_timed <- function (X, A, B, numiter = 1000, e = .Machine$double.eps, verbose = TRUE) {
   if (inherits(X,"matrix"))
     X <- as.matrix(X)
+  cat(sprintf("check type of X, A,B\n"))
+  cat(sprintf("X: class: %s; mode: %s; storage.mode: %s\n", class(X), mode(X), storage.mode(X))) 
+  cat(sprintf("A: class: %s; mode: %s; storage.mode: %s\n", class(A), mode(A), storage.mode(A))) 
+  cat(sprintf("B: class: %s; mode: %s; storage.mode: %s\n", class(B), mode(B), storage.mode(B))) 
   n <- nrow(X)
   m <- ncol(X)
   E <- matrix(1,n,m)

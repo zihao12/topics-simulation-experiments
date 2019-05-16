@@ -34,6 +34,9 @@ cat("Loading GTEx data.\n")
 read.counts.file <- file.path(data.dir,read.counts.file)
 counts <- read.csv.matrix(read.counts.file)
 cat(sprintf("Loaded %d x %d count matrix.\n",nrow(counts),ncol(counts)))
+cat(sprintf("class %s; mode: %s; storage.mode: %s .\n",class(counts),mode(counts), storage.mode(counts)))
+
+
 
 # LOAD INITIAL ESTIMATES
 # ----------------------
